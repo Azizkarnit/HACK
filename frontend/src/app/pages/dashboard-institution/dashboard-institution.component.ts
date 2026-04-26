@@ -1,8 +1,10 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardService, InstitutionDashboardData } from '../../core/services/dashboard.service';
+import { AiService } from '../../core/services/ai.service';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
@@ -12,7 +14,7 @@ Chart.register(...registerables, zoomPlugin);
 @Component({
   selector: 'app-dashboard-institution',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './dashboard-institution.component.html',
   styleUrls: ['./dashboard-institution.component.scss']
 })
@@ -30,6 +32,7 @@ export class DashboardInstitutionComponent implements OnInit, AfterViewInit, OnD
   activeTab = 'Academic';
   activePeriod = '1Y';
   expandedAnomalies: boolean[] = [];
+  currentInstitutionId: string | null = null; // tracks the active institution (from query or user)
 
   tabs = ['Academic', 'Finance', 'HR', 'Research', 'ESG', 'Infrastructure'];
 
@@ -46,16 +49,42 @@ export class DashboardInstitutionComponent implements OnInit, AfterViewInit, OnD
   };
 
   constructor(
-    private auth: AuthService, 
+    public auth: AuthService, 
     private dashboardService: DashboardService,
+    private aiService: AiService,
     private route: ActivatedRoute
   ) {}
+
+  onAnalyze(kpiId: string): void {
+    if (!kpiId) return;
+    // Use the tracked institution ID (supports both admin users and super_admin viewing a specific institution)
+    const instId = this.currentInstitutionId || this.auth.getInstitutionId();
+    if (!instId) {
+      alert('Cannot analyze: no institution is selected.');
+      return;
+    }
+
+    this.isLoading = true;
+    this.aiService.analyzeKpi(instId, kpiId).subscribe({
+      next: () => {
+        // Refresh the dashboard after analysis completes
+        this.ngOnInit();
+      },
+      error: (err) => {
+        console.error('Analysis failed', err);
+        this.isLoading = false;
+        alert('AI Analysis failed. Make sure you have enough data for this KPI.');
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.role = this.auth.getRole();
     
     this.route.queryParams.subscribe(params => {
-      const queryId = params['id'];
+      const queryId = params['id'] || null;
+      // Track current institution: query param takes priority, then fall back to user's own
+      this.currentInstitutionId = queryId || this.auth.getInstitutionId();
       this.isLoading = true;
       
       this.sub?.unsubscribe();
@@ -66,6 +95,10 @@ export class DashboardInstitutionComponent implements OnInit, AfterViewInit, OnD
           
           if (data.kpis && data.kpis.length > 0 && data.kpis[0].institutions) {
              this.institutionName = data.kpis[0].institutions.name;
+             // Also update tracked ID from actual data if missing
+             if (!this.currentInstitutionId) {
+               this.currentInstitutionId = data.kpis[0].institution_id;
+             }
           } else {
              const inst = this.auth.getInstitutionName();
              if (inst) this.institutionName = inst;
@@ -80,7 +113,7 @@ export class DashboardInstitutionComponent implements OnInit, AfterViewInit, OnD
         error: (err) => {
           console.error('Failed to load institution data', err);
           this.isLoading = false;
-          this.errorMessage = "Failed to load dashboard data. Please ensure the backend is running.";
+          this.errorMessage = 'Failed to load dashboard data. Please ensure the backend is running.';
         }
       });
     });
@@ -94,6 +127,7 @@ export class DashboardInstitutionComponent implements OnInit, AfterViewInit, OnD
     tabKpis.forEach((kpi: any) => {
       const name = kpi.kpi_definitions?.name || 'Unknown KPI';
       latestKpis[name] = { 
+        id: kpi.kpi_id,
         domain: this.activeTab, 
         value: kpi.value.toString(), 
         unit: '', 
@@ -168,7 +202,18 @@ export class DashboardInstitutionComponent implements OnInit, AfterViewInit, OnD
     const hist = this.historicalData[this.activePeriod] || [];
     if (hist.length === 0) return;
 
-    const forecast = [hist[hist.length - 1], 88, 89, 90];
+    // Fetch real forecast from predictions if available
+    const predictionInsights = this.allInsights.filter(i => i.type === 'prediction');
+    let forecast: any[] = [];
+    
+    if (predictionInsights.length > 0) {
+      // Map the prediction values and ensure they connect to the last historical point
+      forecast = [hist[hist.length - 1], ...predictionInsights.map(p => p.value)];
+    } else {
+      // Fallback: simple trend if no AI prediction found yet
+      const last = hist[hist.length - 1];
+      forecast = [last, last * 1.02, last * 1.03, last * 1.05];
+    }
     
     this.chart = new Chart(this.lineChartRef.nativeElement, {
       type: 'line',

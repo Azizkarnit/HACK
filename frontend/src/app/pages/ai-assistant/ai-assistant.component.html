@@ -25,6 +25,15 @@
           <div class="avatar ai-av">UG</div>
           <div class="msg-bubble ai-bubble">
             <div [innerHTML]="m.safeText"></div>
+            
+            <!-- Source Citations (RAG) -->
+            <div class="sources-list" *ngIf="m.sources && m.sources.length > 0">
+              <span class="sources-title">Sources:</span>
+              <span class="source-tag" *ngFor="let s of m.sources">
+                <i class="fas fa-file-pdf"></i> {{ s.filename || s.source || 'Document' }}
+              </span>
+            </div>
+            
             <table class="mini-table" *ngIf="m.table">
               <thead><tr><th>Institution</th><th>Rate</th><th>Status</th><th>Trend</th></tr></thead>
               <tbody>
@@ -39,7 +48,7 @@
       </ng-container>
 
       <div class="typing-indicator" *ngIf="isTyping">
-        <div class="avatar ai-av">UC</div>
+        <div class="avatar ai-av">UG</div>
         <div class="typing-container">
           <div class="typing-text">{{ loadingMessage }}</div>
           <div class="typing-bubble"><span></span><span></span><span></span></div>

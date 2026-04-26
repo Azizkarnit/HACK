@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, from, map, tap } from 'rxjs';
 import { User, UserRole, AuthResponse } from '../models/user.model';
 import { environment } from '../../../environments/environment';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -15,13 +16,36 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<User | null>(this.loadUser());
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private supabase: SupabaseService
+  ) {}
 
   login(email: string, password: string): Observable<AuthResponse> {
-    const payload = { email, password };
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, payload, {
-      headers: { 'Content-Type': 'application/json' }
-    }).pipe(
+    return from(this.supabase.client.auth.signInWithPassword({ email, password })).pipe(
+      map(res => {
+        if (res.error) throw res.error;
+        if (!res.data.session || !res.data.user) throw new Error('No session data');
+
+        // Extract metadata from Supabase user
+        const metadata = res.data.user.user_metadata || {};
+        const user: User = {
+          id: res.data.user.id,
+          full_name: metadata['full_name'] || res.data.user.email?.split('@')[0] || 'User',
+          email: res.data.user.email || '',
+          role: (metadata['role'] as UserRole) || 'admin',
+          institution_id: metadata['institution_id'],
+          institution_name: metadata['institution_name'],
+          status: 'active'
+        };
+
+        return {
+          access_token: res.data.session.access_token,
+          token_type: 'bearer',
+          user: user
+        };
+      }),
       tap(res => {
         localStorage.setItem(this.TOKEN_KEY, res.access_token);
         localStorage.setItem(this.ROLE_KEY,  res.user.role);

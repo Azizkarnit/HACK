@@ -30,6 +30,9 @@
     <div class="stat-card" *ngFor="let k of kpiCards">
       <div class="stat-label">
         <span class="badge badge-navy">{{ k.domain }}</span>
+        <button class="ai-analyze-btn" (click)="onAnalyze(k.id)" title="Analyze with AI">
+          <i class="fas fa-robot"></i>
+        </button>
         <i class="fas fa-arrow-trend-up" [style.color]="k.positive ? 'var(--success)' : 'var(--danger)'"></i>
       </div>
       <div class="stat-value">{{ k.value }}<span class="stat-unit"> {{ k.unit }}</span></div>
@@ -94,6 +97,11 @@
         <div class="anomaly-explanation" *ngIf="expandedAnomalies[i]">
           <i class="fas fa-robot" style="color:var(--gold)"></i>
           {{ a.explanation }}
+          <div class="mt-4">
+            <a class="btn btn-primary btn-sm" [routerLink]="['/analytics/what-if']" [queryParams]="{institution: currentInstitutionId, base: 'FIN_01'}">
+              <i class="fas fa-flask"></i> Analyze Impact with What-If
+            </a>
+          </div>
         </div>
       </div>
     </div>

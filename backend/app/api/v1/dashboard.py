@@ -101,7 +101,7 @@ async def compare_institutions(kpi_code: str, user=Depends(get_current_user)):
     return res.data
 
 @router.get("/export-pdf")
-async def export_pdf(institution_id: str, user=Depends(get_current_user)):
+async def export_pdf(institution_id: str, report_type: str = Query("Report"), user=Depends(get_current_user)):
     if not can_access_institution(user, institution_id):
         raise HTTPException(status_code=403, detail="Access denied to this institution's reports")
 
@@ -109,7 +109,7 @@ async def export_pdf(institution_id: str, user=Depends(get_current_user)):
     supabase.table("system_activity").insert({"type": "report_generated", "institution_id": institution_id}).execute()
 
     res = supabase.table("kpi_values").select("*").eq("institution_id", institution_id).execute()
-    pdf_buffer = report_service.generate_pdf_report(f"Institutional Report - {institution_id}", res.data)
+    pdf_buffer = report_service.generate_pdf_report(f"U-OS {report_type.title()} Report", res.data)
     
     return StreamingResponse(
         pdf_buffer,
@@ -118,7 +118,7 @@ async def export_pdf(institution_id: str, user=Depends(get_current_user)):
     )
 
 @router.get("/export-excel")
-async def export_excel(institution_id: str, user=Depends(get_current_user)):
+async def export_excel(institution_id: str, report_type: str = Query("Report"), user=Depends(get_current_user)):
     if not can_access_institution(user, institution_id):
         raise HTTPException(status_code=403, detail="Access denied to this institution's reports")
 

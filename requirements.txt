@@ -28,3 +28,4 @@ pdf2image
 pillow
 statsmodels
 prophet
+openpyxl

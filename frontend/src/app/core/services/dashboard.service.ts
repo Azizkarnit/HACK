@@ -93,4 +93,18 @@ export class DashboardService {
       headers: this.getHeaders()
     });
   }
+
+  downloadPdfReport(institutionId: string, reportType: string = 'Report'): Observable<Blob> {
+    return this.http.get(`${environment.apiUrl}/dashboard/export-pdf?institution_id=${institutionId}&report_type=${reportType}`, {
+      headers: this.getHeaders(),
+      responseType: 'blob'
+    });
+  }
+
+  downloadExcelReport(institutionId: string, reportType: string = 'Report'): Observable<Blob> {
+    return this.http.get(`${environment.apiUrl}/dashboard/export-excel?institution_id=${institutionId}&report_type=${reportType}`, {
+      headers: this.getHeaders(),
+      responseType: 'blob'
+    });
+  }
 }

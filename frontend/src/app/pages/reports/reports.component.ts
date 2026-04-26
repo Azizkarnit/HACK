@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
+import { DashboardService } from '../../core/services/dashboard.service';
 
 @Component({
   selector: 'app-reports',
@@ -42,30 +43,86 @@ export class ReportsComponent implements OnInit {
     { name:'Monthly_Feb_2025_IPEIEM.pdf',   scope:'IPEIEM',          type:'Monthly', format:'pdf',   date:'01 Feb 2025' },
   ];
 
-  institutions = ['ISET Charguia','ESCT','ISG Tunis','IPEIT','IPEIEM','ISSATS','ISSAT Manouba','ISTMT'];
+  institutions: any[] = [];
+  selectedInstId = '';
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
     this.role = this.auth.getRole();
+    this.dashboardService.getInstitutions().subscribe(data => {
+      this.institutions = data;
+      if (this.institutions.length > 0) {
+        this.selectedInstId = this.institutions[0].id;
+      }
+    });
   }
 
   generate(): void {
     this.generating = true;
     this.progress = 0;
     this.generated = false;
+    
+    // Determine target institution (defaults to user's institution if they are not super_admin/agent, or if "all" is selected we use HQ or current for now)
+    const targetInstId = this.scopeMode === 'specific' ? this.selectedInstId : this.auth.getInstitutionId();
+    if (!targetInstId) {
+       alert("No institution selected or found.");
+       this.generating = false;
+       return;
+    }
+
+    const reportObs = this.selectedFormat === 'pdf' 
+      ? this.dashboardService.downloadPdfReport(targetInstId, this.selectedType)
+      : this.dashboardService.downloadExcelReport(targetInstId, this.selectedType);
+
+    // Fake progress bar while waiting for HTTP
     const interval = setInterval(() => {
-      this.progress += 5;
-      if (this.progress >= 100) {
+      if (this.progress < 90) this.progress += 10;
+    }, 200);
+
+    reportObs.subscribe({
+      next: (blob: Blob) => {
         clearInterval(interval);
+        this.progress = 100;
+        
         setTimeout(() => {
           this.generating = false;
           this.generated = true;
           this.showPreview = true;
-          const name = `${this.selectedType}_Report_${new Date().toLocaleDateString('en-GB').replace(/\//g,'-')}.${this.selectedFormat === 'pdf' ? 'pdf' : 'xlsx'}`;
-          this.history.unshift({ name, scope: this.scopeMode === 'all' ? 'All Institutions' : this.selectedInst, type: this.selectedType, format: this.selectedFormat, date: new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) });
-        }, 300);
+          
+          const instName = this.institutions.find(i => i.id === targetInstId)?.name || 'Institution';
+          const ext = this.selectedFormat === 'pdf' ? 'pdf' : 'xlsx';
+          const name = `${this.selectedType}_Report_${new Date().toLocaleDateString('en-GB').replace(/\//g,'-')}_${instName}.${ext}`;
+          
+          this.history.unshift({ 
+            name, 
+            scope: this.scopeMode === 'all' ? 'All Institutions' : instName, 
+            type: this.selectedType, 
+            format: this.selectedFormat, 
+            date: new Date().toLocaleDateString('en-GB', {day:'2-digit',month:'short',year:'numeric'}) 
+          });
+
+          // Trigger download automatically
+          this.downloadBlob(blob, name);
+        }, 500);
+      },
+      error: (err) => {
+        clearInterval(interval);
+        console.error("Report generation failed", err);
+        alert("Failed to generate report. Make sure backend is running and you have access.");
+        this.generating = false;
       }
-    }, 150);
+    });
+  }
+
+  downloadBlob(blob: Blob, filename: string): void {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
   }
 }

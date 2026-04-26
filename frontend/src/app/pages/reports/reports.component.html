@@ -22,8 +22,8 @@
         <button [class.active]="scopeMode==='all'" (click)="scopeMode='all'">All Institutions</button>
         <button [class.active]="scopeMode==='specific'" (click)="scopeMode='specific'">Specific Institution</button>
       </div>
-      <select class="form-control mt-2" *ngIf="scopeMode==='specific'" [(ngModel)]="selectedInst">
-        <option *ngFor="let i of institutions">{{ i }}</option>
+      <select class="form-control mt-2" *ngIf="scopeMode==='specific'" [(ngModel)]="selectedInstId">
+        <option *ngFor="let i of institutions" [value]="i.id">{{ i.name }}</option>
       </select>
     </div>
 
