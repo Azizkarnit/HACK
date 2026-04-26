@@ -11,7 +11,7 @@ def get_current_user(
 
     try:
         # Verify the token with Supabase
-        auth_user = supabase.auth.get_user(token)
+        auth_user = supabase.auth.get_user(jwt=token)
         if not auth_user or not auth_user.user:
             raise HTTPException(status_code=401, detail="Invalid session")
             
@@ -31,8 +31,9 @@ def get_current_user(
         return user_res.data[0]
         
     except Exception as e:
+        print(f"Token validation error: {str(e)}")
         # Catch expired tokens, invalid signatures, etc
         raise HTTPException(
             status_code=401, 
-            detail="Session expired or invalid. Please log in again."
+            detail=f"Session expired or invalid: {str(e)}"
         )

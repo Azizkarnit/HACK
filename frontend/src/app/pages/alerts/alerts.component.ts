@@ -21,6 +21,7 @@ export class AlertsComponent implements OnInit {
   activeAlerts: any[] = []; // Template dependency
   resolvedData: any[] = []; // Template dependency
   resolvedIds: Set<string> = new Set();
+  snoozedIds: Set<string> = new Set();
 
   constructor(
     private auth: AuthService,
@@ -45,6 +46,7 @@ export class AlertsComponent implements OnInit {
           severity: a.severity,
           kpi: a.message.split('(')[0].trim(),
           institution: a.institutions?.name || 'Your Institution',
+          institution_id: a.institution_id,
           domain: 'General',
           current: a.actual_value?.toString() || '--',
           threshold: a.threshold?.toString() || '--',
@@ -70,7 +72,7 @@ export class AlertsComponent implements OnInit {
   }
 
   get filteredAlerts() {
-    let list = this.alertsData.filter(a => !this.resolvedIds.has(a.id));
+    let list = this.alertsData.filter(a => !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id));
     if (this.activeTab === 'critical') list = list.filter(a => a.severity === 'critical');
     if (this.activeTab === 'warning')  list = list.filter(a => a.severity === 'warning');
     if (this.activeTab === 'resolved') return []; // This would pull from a different list if we had it
@@ -78,8 +80,8 @@ export class AlertsComponent implements OnInit {
   }
 
   get unresolvedCount(): number { return this.filteredAlerts.length; }
-  get activeCriticalCount(): number { return this.alertsData.filter(a => a.severity === 'critical' && !this.resolvedIds.has(a.id)).length; }
-  get activeWarningCount():  number { return this.alertsData.filter(a => a.severity === 'warning' && !this.resolvedIds.has(a.id)).length; }
+  get activeCriticalCount(): number { return this.alertsData.filter(a => a.severity === 'critical' && !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id)).length; }
+  get activeWarningCount():  number { return this.alertsData.filter(a => a.severity === 'warning' && !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id)).length; }
 
   setTab(tab: string): void { this.activeTab = tab; }
 
@@ -90,7 +92,23 @@ export class AlertsComponent implements OnInit {
   }
 
   snooze(id: string): void { 
+    this.snoozedIds.add(id);
     this.showToast('Alert snoozed for 24 hours'); 
+  }
+
+  viewDetails(alert: any): void {
+    // Attempt to navigate to the institution or global dashboard depending on the alert
+    const instId = this.alertsData.find(a => a.id === alert.id)?.institution_id;
+    if (instId) {
+      window.location.href = `/institution?id=${instId}`;
+    } else {
+      // If no institution ID, route admins to their own dashboard, and global users to the global dashboard
+      if (this.role === 'admin') {
+        window.location.href = `/institution`;
+      } else {
+        window.location.href = `/dashboard`;
+      }
+    }
   }
 
   markAllResolved(): void {

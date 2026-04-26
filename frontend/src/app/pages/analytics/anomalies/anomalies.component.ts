@@ -17,6 +17,7 @@ export class AnomaliesComponent implements OnInit {
   activeSeverity = 'all';
   expandedCards: boolean[] = [];
   resolvedIds: Set<string> = new Set();
+  snoozedIds: Set<string> = new Set();
   isLoading = true;
 
   anomalies: any[] = [];
@@ -64,16 +65,25 @@ export class AnomaliesComponent implements OnInit {
   }
 
   get filtered() {
-    let list = this.anomalies.filter(a => !this.resolvedIds.has(a.id));
+    let list = this.anomalies.filter(a => !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id));
     if (this.activeSeverity !== 'all') list = list.filter(a => a.severity === this.activeSeverity);
     return list;
   }
 
-  get criticalCount() { return this.anomalies.filter(a => a.severity==='critical' && !this.resolvedIds.has(a.id)).length; }
-  get warningCount()  { return this.anomalies.filter(a => a.severity==='warning'  && !this.resolvedIds.has(a.id)).length; }
-  get normalCount() { 
+  get criticalCount(): number | string { 
+    if (this.isLoading) return '-';
+    return this.anomalies.filter(a => a.severity==='critical' && !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id)).length; 
+  }
+  
+  get warningCount(): number | string { 
+    if (this.isLoading) return '-';
+    return this.anomalies.filter(a => a.severity==='warning'  && !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id)).length; 
+  }
+  
+  get normalCount(): number | string { 
+    if (this.isLoading) return '-';
     // Count institutions that don't have any active anomalies in the current list
-    const anomalyInstIds = new Set(this.anomalies.filter(a => !this.resolvedIds.has(a.id)).map(a => a.institution_id));
+    const anomalyInstIds = new Set(this.anomalies.filter(a => !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id)).map(a => a.institution_id));
     // Assuming total institutions is 12 (from our seeder)
     return Math.max(0, 12 - anomalyInstIds.size);
   }
@@ -99,8 +109,17 @@ export class AnomaliesComponent implements OnInit {
     if (instId) {
       window.location.href = `/institution?id=${instId}`;
     } else {
-      window.location.href = `/institution`;
+      // If no institution ID, route admins to their own dashboard, and global users to the global dashboard
+      if (this.role === 'admin') {
+        window.location.href = `/institution`;
+      } else {
+        window.location.href = `/dashboard`;
+      }
     }
+  }
+
+  snooze(anomaly: any): void {
+    this.snoozedIds.add(anomaly.id);
   }
 
   exportAnomaly(anomaly: any): void {

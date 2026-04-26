@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit {
     this.currentUser = this.auth.getCurrentUser();
     this.initNavReset();
     
-    if (this.role === 'super_admin' || this.role === 'agent') {
+    if (this.role === 'super_admin') {
       this.dashboard.getInstitutions().subscribe(data => {
         this.institutions = data;
       });

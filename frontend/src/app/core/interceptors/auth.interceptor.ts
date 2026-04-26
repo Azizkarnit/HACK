@@ -11,7 +11,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
       // 401 = Unauthorized (Expired token), 403 = Forbidden
-      if (error.status === 401 || error.status === 403) {
+      if (error.status === 401) {
         console.warn('Session expired or unauthorized. Kicking to login...');
         
         // Clear local storage / session

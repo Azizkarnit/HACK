@@ -32,7 +32,7 @@ export class DashboardGlobalComponent implements OnInit, AfterViewInit, OnDestro
     { label: 'Total Institutions', icon: 'fa-building',             value: '-',  sub: 'Loading...',       color: 'navy',    subColor: 'success' },
     { label: 'KPIs Being Tracked', icon: 'fa-chart-bar',            value: '-',  sub: 'Across all institutions',    color: 'navy',    subColor: 'muted' },
     { label: 'Open Alerts',        icon: 'fa-triangle-exclamation', value: '-',  sub: 'Needs attention',         color: 'danger',  subColor: 'danger' },
-    { label: 'Reports Generated',  icon: 'fa-file-lines',           value: '24', sub: 'This month',                color: 'success', subColor: 'muted' },
+    { label: 'Reports Generated',  icon: 'fa-file-lines',           value: '-',  sub: 'Loading...',                color: 'success', subColor: 'muted' },
   ];
 
   institutions: any[] = [];
