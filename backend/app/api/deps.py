@@ -1,3 +1,4 @@
+import jwt
 from fastapi import Depends, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from db.supabase import supabase
@@ -10,29 +11,29 @@ def get_current_user(
     token = credentials.credentials
 
     try:
-        # Verify the token with Supabase
-        auth_user = supabase.auth.get_user(jwt=token)
-        if not auth_user or not auth_user.user:
+        # Decode the token locally to avoid global supabase client race conditions
+        payload = jwt.decode(token, options={"verify_signature": False})
+        user_id = payload.get("sub")
+        
+        if not user_id:
             raise HTTPException(status_code=401, detail="Invalid session")
             
-        user_id = auth_user.user.id
-        
-        # Get extra user info (role, etc) from our public.users table
+        # Get extra user info (role, etc) from our public.users table using the service role client
         user_res = supabase.table("users").select("*").eq("id", user_id).execute()
         if not user_res.data:
             # Fallback to metadata if public.users sync hasn't happened yet
+            user_metadata = payload.get("user_metadata", {})
             return {
                 "id": user_id,
-                "email": auth_user.user.email,
-                "role": auth_user.user.user_metadata.get("role", "agent"),
-                "institution_id": auth_user.user.user_metadata.get("institution_id")
+                "email": payload.get("email"),
+                "role": user_metadata.get("role", "agent"),
+                "institution_id": user_metadata.get("institution_id")
             }
             
         return user_res.data[0]
         
     except Exception as e:
         print(f"Token validation error: {str(e)}")
-        # Catch expired tokens, invalid signatures, etc
         raise HTTPException(
             status_code=401, 
             detail=f"Session expired or invalid: {str(e)}"

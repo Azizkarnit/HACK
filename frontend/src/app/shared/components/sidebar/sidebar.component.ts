@@ -43,6 +43,7 @@ export class SidebarComponent implements OnInit {
         { icon: 'fa-chart-line',              label: 'Analytics',    route: '/analytics/anomalies', roles: ['super_admin', 'agent', 'admin'] },
         { icon: 'fa-triangle-exclamation',   label: 'Alerts',       route: '/alerts',              roles: ['super_admin', 'agent', 'admin'] },
         { icon: 'fa-robot',                  label: 'AI Assistant', route: '/ai-assistant',        roles: ['super_admin', 'agent', 'admin'] },
+        { icon: 'fa-leaf',                   label: 'ESG Optimizer',route: '/analytics/esg-optimizer',roles: ['super_admin', 'agent', 'admin'] },
       ]
     },
     {

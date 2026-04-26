@@ -44,6 +44,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/analytics/what-if/what-if.component').then(m => m.WhatIfComponent)
       },
       {
+        path: 'analytics/esg-optimizer',
+        canActivate: [roleGuard('super_admin', 'agent', 'admin')],
+        loadComponent: () => import('./pages/analytics/esg-optimizer/esg-optimizer.component').then(m => m.EsgOptimizerComponent)
+      },
+      {
         path: 'analytics',
         redirectTo: 'analytics/anomalies',
         pathMatch: 'full'

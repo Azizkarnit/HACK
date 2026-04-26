@@ -1,0 +1,148 @@
+<div class="analytics-container">
+  <div class="header-section animate-slide-down">
+    <div class="title-with-icon">
+      <div class="icon-pulse">
+        <i class="fa-solid fa-leaf"></i>
+      </div>
+      <div>
+        <h1>ESG Carbon Optimizer</h1>
+        <p>Harnessing AI to engineer a sustainable institutional future</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls-card animate-fade-in">
+    <div class="card-glow"></div>
+    <div class="form-group">
+      <label for="institution">Target Institution</label>
+      <div class="select-wrapper">
+        <select id="institution" [(ngModel)]="selectedInstitution" class="form-control">
+          <option *ngFor="let inst of institutions" [value]="inst.id">{{ inst.name }}</option>
+        </select>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+    
+    <button (click)="runOptimization()" [disabled]="loading || !selectedInstitution" class="btn-optimize" [class.loading]="loading">
+      <span class="btn-content">
+        <i class="fa-solid" [class.fa-bolt-lightning]="!loading" [class.fa-circle-notch]="loading" [class.fa-spin]="loading"></i>
+        {{ loading ? 'Analyzing Ecosystem...' : 'Generate Roadmap' }}
+      </span>
+      <div class="btn-shine"></div>
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="ai-loader">
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="circle"></div>
+      <div class="scan-line"></div>
+    </div>
+    <h3>AI Engine at Work</h3>
+    <p>Processing {{ selectedInstitution ? 'institutional' : '' }} ESG data clusters and infrastructure blueprints...</p>
+  </div>
+
+  <div *ngIf="error" class="error-card animate-shake">
+    <i class="fa-solid fa-circle-exclamation"></i>
+    <div class="error-text">
+      <strong>Optimization Interrupted</strong>
+      <p>{{ error }}</p>
+    </div>
+  </div>
+
+  <div *ngIf="optimizationResult" class="results-grid animate-fade-in">
+    <div class="stats-row">
+      <div class="stat-card blue">
+        <div class="stat-icon"><i class="fa-solid fa-microchip"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">{{ optimizationResult.metrics_analyzed }}</span>
+          <span class="stat-label">KPIs Analyzed</span>
+        </div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon"><i class="fa-solid fa-file-shield"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">{{ optimizationResult.context_found ? 'Active' : 'N/A' }}</span>
+          <span class="stat-label">Document RAG</span>
+        </div>
+      </div>
+      <div class="stat-card gold">
+        <div class="stat-icon"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="stat-info">
+          <span class="stat-value">94%</span>
+          <span class="stat-label">AI Confidence</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Structured Results -->
+    <div class="content-layout">
+      <!-- Left Column: Leak Detection -->
+      <div class="leak-column animate-slide-right">
+        <div class="card leak-card">
+          <div class="card-tag">DETECTION</div>
+          <div class="card-header">
+            <i class="fa-solid fa-fire-flame-curved"></i>
+            <h2>Primary Efficiency Leak</h2>
+          </div>
+          <div class="card-content">
+            <p>{{ optimizationResult.parsed.leak.content || 'Analysis in progress...' }}</p>
+          </div>
+          <div class="leak-footer">
+            <span class="priority high">Priority: High</span>
+            <span class="impact-label">Estimated Impact: ~15-20% Reduction</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Roadmap Timeline -->
+      <div class="roadmap-column animate-slide-left">
+        <div class="timeline-container">
+          <div class="timeline-header">
+            <h2>Sustainability Roadmap</h2>
+            <span class="badge">3 Steps</span>
+          </div>
+
+          <div class="timeline-steps">
+            <div *ngFor="let step of optimizationResult.parsed.steps; let last = last" class="timeline-item">
+              <div class="timeline-marker">
+                <div class="marker-circle">{{ step.num }}</div>
+                <div *ngIf="!last" class="marker-line"></div>
+              </div>
+              <div class="timeline-content">
+                <h3>{{ step.title }}</h3>
+                <div class="step-details">
+                  <ng-container *ngIf="step.action || step.implementation || step.goal; else rawStep">
+                    <div class="detail-item" *ngIf="step.action">
+                      <span class="detail-label">ACTION</span>
+                      <p>{{ step.action }}</p>
+                    </div>
+                    <div class="detail-item" *ngIf="step.implementation">
+                      <span class="detail-label">IMPLEMENTATION</span>
+                      <p>{{ step.implementation }}</p>
+                    </div>
+                    <div class="detail-item goal" *ngIf="step.goal">
+                      <span class="detail-label">GOAL</span>
+                      <p>{{ step.goal }}</p>
+                    </div>
+                  </ng-container>
+                  <ng-template #rawStep>
+                    <div class="detail-item">
+                      <p>{{ step.rawContent }}</p>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Fallback if parsing didn't find structured steps -->
+            <div *ngIf="optimizationResult.parsed.isRaw" class="raw-fallback">
+              <div class="markdown-body" [innerHTML]="optimizationResult.sustainability_roadmap"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

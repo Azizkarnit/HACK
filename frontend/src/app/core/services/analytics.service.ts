@@ -57,4 +57,9 @@ export class AnalyticsService {
     const url = `${environment.apiUrl}/ai/simulate?institution_id=${data.institution_id}&base_kpi=${data.base_kpi}&target_kpi=${data.target_kpi}&change_percent=${data.change_percent}`;
     return this.http.get<any>(url, { headers: this.getHeaders() });
   }
+
+  getEsgOptimization(institutionId: string): Observable<any> {
+    const url = `${environment.apiUrl}/ai/esg/optimize?institution_id=${institutionId}`;
+    return this.http.get<any>(url, { headers: this.getHeaders() });
+  }
 }

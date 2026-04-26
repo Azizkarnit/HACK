@@ -13,6 +13,7 @@ const TITLES: Record<string, string> = {
   '/analytics/anomalies':   'Anomaly Detection',
   '/analytics/predictions': 'KPI Predictions',
   '/analytics/what-if':     'What-If Simulator',
+  '/analytics/esg-optimizer': 'ESG Optimizer',
   '/ai-assistant':          'AI Assistant',
   '/reports':               'Reports',
   '/data-ingestion':        'Data Upload & Extraction',
