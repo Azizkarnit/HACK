@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-user-management',
@@ -22,6 +24,8 @@ export class UserManagementComponent implements OnInit {
   toastMsg = '';
 
   modalForm = { full_name: '', email: '', role: 'agent', institution: '', password: '', confirm_password: '' };
+  isSaving = false;
+  passwordVisible = false;
 
   users = [
     { id:'1', full_name:'Karim Mansouri',  email:'karim.m@ucar.rnu.tn',     role:'super_admin', institution:'All Institutions', status:'active',   last_login:'Today' },
@@ -40,7 +44,7 @@ export class UserManagementComponent implements OnInit {
 
   institutions = ['ISG Tunis','IPEIEM','ESCT','ISSATS','ISTMT','IPEIT','ISET Charguia','ISSAT Manouba'];
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private http: HttpClient) {}
 
   ngOnInit(): void {
     this.role = this.auth.getRole();
@@ -63,17 +67,59 @@ export class UserManagementComponent implements OnInit {
     };
   }
 
-  openAddModal(): void { this.editMode = false; this.modalForm = { full_name:'', email:'', role:'agent', institution:'', password:'', confirm_password:'' }; this.showModal = true; }
+  openAddModal(): void { 
+    this.editMode = false; 
+    this.passwordVisible = false;
+    this.modalForm = { full_name:'', email:'', role:'agent', institution:'', password:'', confirm_password:'' }; 
+    this.showModal = true; 
+  }
   openEditModal(u: any): void { this.editMode = true; this.modalForm = { ...u, password:'', confirm_password:'' }; this.showModal = true; }
   closeModal(): void { this.showModal = false; }
 
-  saveUser(): void {
-    if (!this.modalForm.full_name || !this.modalForm.email) return;
-    if (!this.editMode) {
-      this.users.push({ id: String(this.users.length+1), ...this.modalForm, status:'active', last_login:'Just now' } as any);
+  generatePassword(): void {
+    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$%';
+    const length = 12;
+    let pwd = '';
+    for (let i = 0; i < length; i++) {
+      pwd += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    this.showModal = false;
-    this.showToast(this.editMode ? 'User updated successfully' : 'User created successfully');
+    this.modalForm.password = pwd;
+    this.passwordVisible = true;
+  }
+
+  saveUser(): void {
+    if (!this.modalForm.full_name || !this.modalForm.email || !this.modalForm.password) return;
+    this.isSaving = true;
+
+    if (!this.editMode) {
+      const token = this.auth.getToken();
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      const payload = {
+        full_name: this.modalForm.full_name,
+        email: this.modalForm.email,
+        role: this.modalForm.role,
+        institution: this.modalForm.institution,
+        password: this.modalForm.password
+      };
+
+      this.http.post(`${environment.apiUrl}/users/create`, payload, { headers }).subscribe({
+        next: () => {
+          this.users.push({ id: String(this.users.length+1), ...this.modalForm, status:'active', last_login:'Just now' } as any);
+          this.showModal = false;
+          this.isSaving = false;
+          this.showToast('User created & welcome email sent!');
+        },
+        error: (err) => {
+          console.error('Failed to create user', err);
+          this.isSaving = false;
+          this.showToast('Failed to create user. Please try again.');
+        }
+      });
+    } else {
+      this.showModal = false;
+      this.isSaving = false;
+      this.showToast('User updated successfully');
+    }
   }
 
   confirmDelete(u: any): void { this.deleteTarget = u; this.showDeleteModal = true; }

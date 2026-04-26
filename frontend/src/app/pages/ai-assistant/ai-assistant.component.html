@@ -16,15 +16,15 @@
       <ng-container *ngFor="let m of messages">
         <!-- User Message -->
         <div class="msg-row user-msg" *ngIf="m.role==='user'">
-          <div class="msg-bubble user-bubble">{{ m.text }}</div>
+          <div class="msg-bubble user-bubble" [innerHTML]="m.safeText"></div>
           <div class="avatar user-av">SA</div>
         </div>
 
         <!-- AI Message -->
         <div class="msg-row ai-msg" *ngIf="m.role==='ai'">
-          <div class="avatar ai-av">UC</div>
+          <div class="avatar ai-av">UG</div>
           <div class="msg-bubble ai-bubble">
-            <p style="white-space:pre-line">{{ m.text }}</p>
+            <div [innerHTML]="m.safeText"></div>
             <table class="mini-table" *ngIf="m.table">
               <thead><tr><th>Institution</th><th>Rate</th><th>Status</th><th>Trend</th></tr></thead>
               <tbody>
@@ -40,7 +40,10 @@
 
       <div class="typing-indicator" *ngIf="isTyping">
         <div class="avatar ai-av">UC</div>
-        <div class="typing-bubble"><span></span><span></span><span></span></div>
+        <div class="typing-container">
+          <div class="typing-text">{{ loadingMessage }}</div>
+          <div class="typing-bubble"><span></span><span></span><span></span></div>
+        </div>
       </div>
     </div>
 

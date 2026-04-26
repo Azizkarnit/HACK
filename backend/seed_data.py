@@ -15,12 +15,12 @@ def seed_database():
 
     supabase: Client = create_client(url, key)
 
-    print("=== Supercharging U-OS Database with Massive Data ===")
+    print("=== Supercharging UniGov Database with Massive Data ===")
     
     # 1. Seed more institutions (Total 12)
     print("\n1. Seeding 12 Institutions...")
     institutions_list = [
-        {"code": "UCAR-HQ", "name": "UCAR Headquarters (Global)"},
+        {"code": "UniGov-HQ", "name": "UniGov Headquarters (Global)"},
         {"code": "ISG-TUNIS", "name": "ISG Tunis"},
         {"code": "ESCT", "name": "ESCT Business School"},
         {"code": "IPEIT", "name": "IPEI Tunis"},

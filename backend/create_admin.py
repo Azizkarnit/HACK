@@ -14,33 +14,33 @@ def create_super_admin():
 
     supabase: Client = create_client(url, key)
 
-    print("=== U-OS Platform Initialization ===")
+    print("=== UniGov Platform Initialization ===")
     
     # 1. Create a Global Institution (UCAR HQ) if it doesn't exist
-    print("\n1. Setting up Global Institution (UCAR HQ)...")
-    inst_code = "UCAR-HQ"
+    print("\n1. Setting up Global Institution (UniGov HQ)...")
+    inst_code = "UniGov-HQ"
     
     # Check if exists
     res = supabase.table("institutions").select("*").eq("code", inst_code).execute()
     
     if res.data:
-        print("   -> UCAR HQ already exists.")
+        print("   -> UniGov HQ already exists.")
         inst_id = res.data[0]["id"]
     else:
         try:
             insert_res = supabase.table("institutions").insert({
                 "code": inst_code,
-                "name": "UCAR Headquarters"
+                "name": "UniGov Headquarters"
             }).execute()
             inst_id = insert_res.data[0]["id"]
-            print("   -> Created UCAR HQ institution.")
+            print("   -> Created UniGov HQ institution.")
         except Exception as e:
             print(f"[ERROR] Failed to create institution: {e}")
             return
 
     # 2. Create or fetch the Super Admin user
     print("\n2. Creating Super Admin Account...")
-    admin_email = "admin@ucar.tn"
+    admin_email = "admin@unigov.tn"
     admin_password = "adminpassword123"
     
     user_id = None

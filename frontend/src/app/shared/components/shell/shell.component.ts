@@ -60,6 +60,6 @@ export class ShellComponent implements OnInit {
 
   private updateTitle(url: string): void {
     const match = Object.keys(TITLES).find(k => url.startsWith(k));
-    this.pageTitle = match ? TITLES[match] : 'U-OS';
+    this.pageTitle = match ? TITLES[match] : 'UniGov';
   }
 }

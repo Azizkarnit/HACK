@@ -134,7 +134,7 @@ async def run_prompt(prompt: str):
 
     # 3. Combine contexts and run LLM
     system_prompt = f"""
-    You are the U-OS AI Assistant. You help users understand institutional data and policies.
+    You are the UniGov AI Assistant. You help users understand institutional data and policies.
     
     {db_context}
     
@@ -165,7 +165,7 @@ async def generate_network_strategic_insight():
     db_context = await get_database_snapshot()
     
     prompt = f"""
-    UCAR Network Strategic Intelligence Report
+    UniGov Network Strategic Intelligence Report
     {db_context}
     
     TASK: Analyze the latest data points across all institutions.
@@ -211,7 +211,7 @@ async def run_strategic_benchmark(kpi_code: str):
     laggard = sorted_insts[-1]
 
     prompt = f"""
-    UCAR Strategic Benchmarking: {kpi_name}
+    UniGov Strategic Benchmarking: {kpi_name}
     Leader: Institution {leader[0]} ({leader[1]:.2f})
     Laggard: Institution {laggard[0]} ({laggard[1]:.2f})
     
@@ -304,7 +304,7 @@ async def run_esg_optimization(institution_id: str):
 
     # 4. Generate Strategic Roadmap
     prompt = f"""
-    UCAR ESG Carbon Optimizer Report
+    UniGov ESG Carbon Optimizer Report
     Institution: {institution_id}
     
     Current ESG Metrics (Supabase):
@@ -362,8 +362,8 @@ def _run_keyword_prompt(prompt: str):
 
     if "institutions" in prompt or "list" in prompt:
         names = [i["name"] for i in institutions[:5]]
-        return {"result": f"The UCAR network currently manages {len(institutions)} institutions, including: {', '.join(names)} and others."}
+        return {"result": f"The UniGov network currently manages {len(institutions)} institutions, including: {', '.join(names)} and others."}
 
     return {
-        "result": "I am the U-OS AI Assistant. I can see your institutional data! To unlock my full conversational power (GPT-4o), please configure the OPENAI_API_KEY. However, I can still answer basic questions about institution names and their key metrics if you name them!"
+        "result": "I am the UniGov AI Assistant. I can see your institutional data! To unlock my full conversational power (GPT-4o), please configure the OPENAI_API_KEY. However, I can still answer basic questions about institution names and their key metrics if you name them!"
     }

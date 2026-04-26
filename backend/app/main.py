@@ -10,13 +10,14 @@ from api.v1.dashboard import router as dashboard_router
 from api.v1.ingestion import router as ingestion_router
 from api.v1.institutions import router as institutions_router
 from api.v1.alerts import router as alerts_router
+from api.v1.users import router as users_router
 
 
 # =====================================================
 # APP INIT
 # =====================================================
 app = FastAPI(
-    title="UCAR AI Platform (U-OS)",
+    title="UniGov AI Platform",
     description="Strategic Operating System for University Governance",
     version="1.0.0",
     redirect_slashes=False  # Prevent CORS issues on trailing slashes
@@ -59,6 +60,7 @@ app.include_router(dashboard_router, prefix="/api/v1")
 app.include_router(ingestion_router, prefix="/api/v1/ingestion")
 app.include_router(institutions_router, prefix="/api/v1/institutions")
 app.include_router(alerts_router, prefix="/api/v1")
+app.include_router(users_router, prefix="/api/v1")
 
 
 # =====================================================
@@ -66,7 +68,7 @@ app.include_router(alerts_router, prefix="/api/v1")
 # =====================================================
 @app.get("/api/v1/health")
 def root():
-    return {"status": "healthy", "platform": "UCAR-UOS"}
+    return {"status": "healthy", "platform": "UniGov"}
 
 @app.get("/api/v1/version")
 def version():
@@ -81,7 +83,7 @@ def custom_openapi():
         return app.openapi_schema
 
     openapi_schema = get_openapi(
-        title="UCAR AI Platform (U-OS)",
+        title="UniGov AI Platform",
         version="1.0.0",
         description="Unified Intelligence for 30+ Institutions",
         routes=app.routes,
