@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../core/services/auth.service';
 import { DashboardService } from '../../../core/services/dashboard.service';
 import { AnalyticsService } from '../../../core/services/analytics.service';
+import { ActivatedRoute } from '@angular/router';
 import { Chart, registerables } from 'chart.js';
 Chart.register(...registerables);
 
@@ -23,19 +24,19 @@ export class WhatIfComponent implements OnInit, AfterViewInit {
 
   institutions: any[] = [];
   selectedInstitution = '';
-  baseKpi = 'dropout_rate';
-  targetKpi = 'success_rate';
+  baseKpi = 'FIN_01';
+  targetKpi = 'ACAD_02';
   changePct = 10;
   loading = false;
   showResults = false;
 
   kpis = [
-    { code: 'dropout_rate', name: 'Dropout Rate' },
-    { code: 'success_rate', name: 'Success Rate' },
-    { code: 'budget_execution', name: 'Budget Execution' },
-    { code: 'absenteeism_rate', name: 'Absenteeism Rate' },
-    { code: 'carbon_footprint', name: 'Carbon Footprint' },
-    { code: 'classroom_occupancy', name: 'Classroom Occupancy' }
+    { code: 'ACAD_02', name: 'Success Rate' },
+    { code: 'FIN_01', name: 'Budget Execution' },
+    { code: 'HR_01', name: 'Staff Satisfaction' },
+    { code: 'ESG_01', name: 'Energy Consumption' },
+    { code: 'RES_01', name: 'Research Papers Published' },
+    { code: 'INF_01', name: 'Classroom Utilization' }
   ];
 
   presets = [-20, -10, 10, 25, 50];
@@ -52,13 +53,26 @@ export class WhatIfComponent implements OnInit, AfterViewInit {
   constructor(
     private auth: AuthService, 
     private dashboardService: DashboardService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.role = this.auth.getRole();
     this.isAccessDenied = this.role === 'admin';
     this.loadInstitutions();
+
+    // Pre-load from deep-link query params (e.g. from anomaly "Analyze Impact" button)
+    this.route.queryParams.subscribe(params => {
+      if (params['base']) this.baseKpi = params['base'];
+      // Institution selection resolved after institutions load
+      if (params['institution']) {
+        this.dashboardService.getInstitutions().subscribe(data => {
+          const match = data.find((i: any) => i.id === params['institution']);
+          if (match) this.selectedInstitution = match.id;
+        });
+      }
+    });
   }
 
   ngAfterViewInit(): void {}

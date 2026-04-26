@@ -27,4 +27,10 @@ export class AiService {
       headers: this.getHeaders()
     });
   }
+
+  analyzeKpi(institutionId: string, kpiId: string): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/ai/analyze?institution_id=${institutionId}&kpi_id=${kpiId}`, {}, {
+      headers: this.getHeaders()
+    });
+  }
 }
