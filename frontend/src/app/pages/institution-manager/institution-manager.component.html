@@ -1,0 +1,122 @@
+<div class="page-content">
+  <div class="inst-header-row mb-6">
+    <div class="inst-pills">
+      <span class="badge badge-navy">{{ counts.total }} Total</span>
+      <span class="badge badge-success">{{ counts.active }} Active</span>
+      <span class="badge" style="background:var(--gray-100);color:var(--gray-400)">{{ counts.inactive }} Inactive</span>
+    </div>
+    <div class="inst-controls">
+      <div class="view-toggle">
+        <button [class.active]="viewMode==='table'" (click)="viewMode='table'"><i class="fas fa-table"></i> Table</button>
+        <button [class.active]="viewMode==='cards'" (click)="viewMode='cards'"><i class="fas fa-grip"></i> Cards</button>
+      </div>
+      <button class="btn btn-primary" *ngIf="role==='super_admin'" (click)="openModal()"><i class="fas fa-plus"></i> Add Institution</button>
+    </div>
+  </div>
+
+  <div class="filter-bar mb-6">
+    <input type="text" class="form-control" placeholder="Search institutions..." style="flex:1" [(ngModel)]="searchTerm">
+  </div>
+
+  <!-- TABLE VIEW -->
+  <div class="card" *ngIf="viewMode==='table'">
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Name</th><th>City</th><th>Type</th><th>KPI Health</th><th>Alerts</th><th>Status</th><th *ngIf="role==='super_admin'">Actions</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let inst of filteredInstitutions; let i=index" [style.opacity]="inst.status==='inactive'?'0.6':''">
+          <td style="color:var(--gray-400)">{{ i+1 }}</td>
+          <td class="fw-500">{{ inst.name }}</td>
+          <td>{{ inst.city }}</td>
+          <td style="color:var(--gray-400)">{{ inst.type }}</td>
+          <td>
+            <div class="health-bar-wrap">
+              <div class="health-bar-track"><div class="health-bar-fill" [style.width]="inst.score+'%'" [style.background]="scoreColor(inst.score)"></div></div>
+              <span class="health-score" [style.color]="scoreColor(inst.score)">{{ inst.score }}/100</span>
+            </div>
+          </td>
+          <td>
+            <span class="badge badge-critical" *ngIf="inst.alerts>0">{{ inst.alerts }}</span>
+            <span style="color:var(--gray-200)" *ngIf="inst.alerts===0">—</span>
+          </td>
+          <td>
+            <span class="badge" style="background:var(--gray-100);color:var(--gray-400)" *ngIf="inst.status==='inactive'">Inactive</span>
+            <span class="badge badge-success" *ngIf="inst.status==='active'">Active</span>
+          </td>
+          <td *ngIf="role==='super_admin'">
+            <button class="btn-icon" (click)="openPanel(inst)" title="View Dashboard"><i class="fas fa-gauge" style="color:var(--navy)"></i></button>
+            <button class="btn-icon" title="Edit"><i class="fas fa-pen-to-square" style="color:var(--warning)"></i></button>
+            <button class="btn-icon" (click)="deleteInstitution(inst)" title="Delete"><i class="fas fa-trash" style="color:var(--danger)"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CARD VIEW -->
+  <div class="inst-cards" *ngIf="viewMode==='cards'">
+    <div class="inst-card" *ngFor="let inst of filteredInstitutions" (click)="openPanel(inst)">
+      <div class="ic-top">
+        <div class="ic-initial">{{ getInitial(inst.name) }}</div>
+        <div class="ic-info">
+          <div class="ic-name">{{ inst.name }}</div>
+          <div class="ic-type">{{ inst.type }}</div>
+        </div>
+        <div class="ic-score" [style.border-color]="scoreColor(inst.score)" [style.color]="scoreColor(inst.score)">
+          {{ inst.score }}
+        </div>
+      </div>
+      <div class="ic-meta">
+        <span><i class="fas fa-map-marker-alt"></i> {{ inst.city }}</span>
+        <span class="badge badge-success" *ngIf="inst.status==='active'">Active</span>
+      </div>
+      <div class="ic-alerts" *ngIf="inst.alerts>0" style="color:var(--danger);font-size:13px">
+        <i class="fas fa-triangle-exclamation"></i> {{ inst.alerts }} alerts
+      </div>
+      <button class="btn btn-outline btn-full" style="margin-top:12px" (click)="$event.stopPropagation(); openPanel(inst)">View Dashboard →</button>
+    </div>
+  </div>
+</div>
+
+<!-- Side Panel -->
+<div class="panel-overlay" *ngIf="showPanel" (click)="closePanel()"></div>
+<div class="side-panel" *ngIf="showPanel">
+  <button class="btn-icon panel-close" (click)="closePanel()"><i class="fas fa-times"></i></button>
+  <h2>{{ selectedInstitution?.name }}</h2>
+  <span class="badge badge-navy">{{ selectedInstitution?.type }}</span>
+
+  <div class="panel-stats grid-2 mt-4">
+    <div class="ps-item"><div class="ps-val">4,280</div><div class="ps-lbl">Students</div></div>
+    <div class="ps-item"><div class="ps-val">23</div><div class="ps-lbl">Active KPIs</div></div>
+    <div class="ps-item"><div class="ps-val" [style.color]="'var(--danger)'">{{ selectedInstitution?.alerts }}</div><div class="ps-lbl">Open Alerts</div></div>
+    <div class="ps-item"><div class="ps-val" [style.color]="scoreColor(selectedInstitution?.score)">{{ selectedInstitution?.score }}</div><div class="ps-lbl">Health Score</div></div>
+  </div>
+
+  <div class="domain-bars mt-4">
+    <h4>KPI Health by Domain</h4>
+    <div class="db-row" *ngFor="let d of [{n:'Academic',s:78},{n:'Finance',s:62},{n:'HR',s:71},{n:'Research',s:85},{n:'ESG',s:64},{n:'Infrastructure',s:41}]">
+      <span class="db-label">{{ d.n }}</span>
+      <div class="progress-track flex-1"><div class="progress-fill" [style.width]="d.s+'%'" [class]="d.s>=70?'success':d.s>=50?'warning':'danger'"></div></div>
+      <span class="db-score" [style.color]="scoreColor(d.s)">{{ d.s }}</span>
+    </div>
+  </div>
+
+  <div class="panel-actions mt-4">
+    <a routerLink="/institution" class="btn btn-primary btn-full" (click)="closePanel()"><i class="fas fa-arrow-right"></i> Open Full Dashboard</a>
+  </div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header"><h2>Add Institution</h2><button class="btn-icon" (click)="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="form-group"><label>Institution Name</label><input class="form-control" type="text" [(ngModel)]="modalForm.name"></div>
+    <div class="form-group"><label>City</label><input class="form-control" type="text" [(ngModel)]="modalForm.city"></div>
+    <div class="form-group"><label>Type</label><input class="form-control" type="text" [(ngModel)]="modalForm.type"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closeModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveInstitution()">Save Institution</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" *ngIf="toastMsg"><div class="toast toast-success">✓ {{ toastMsg }}</div></div>

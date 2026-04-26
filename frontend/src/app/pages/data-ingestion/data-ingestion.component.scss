@@ -1,0 +1,35 @@
+.ingestion-cols { display: grid; grid-template-columns: 45fr 55fr; gap: 24px; @media (max-width: 1024px) { grid-template-columns: 1fr; } }
+.left-col { display: flex; flex-direction: column; }
+.right-col { display: flex; flex-direction: column; }
+
+.dropzone {
+  border: 2px dashed var(--gray-200); border-radius: 12px; padding: 40px; text-align: center; cursor: pointer; transition: all 200ms;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  i { font-size: 40px; color: var(--gray-400); }
+  h3 { font-size: 16px; font-weight: 600; color: var(--gray-700); }
+  span { font-size: 14px; color: var(--gray-400); }
+  small { font-size: 12px; color: var(--gray-400); }
+  &.drag-over { border-color: var(--navy); background: var(--navy-pale); }
+  &.has-file { border-color: var(--success); background: var(--success-bg); }
+}
+
+.pipeline-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; }
+.pipeline-steps { display: flex; flex-direction: column; gap: 12px; }
+.pipe-step { display: flex; align-items: center; gap: 12px;
+  .step-circle { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--gray-200); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--gray-400); font-size: 12px;
+    &.active   { background: var(--navy); border-color: var(--navy); color: #fff; }
+    &.complete { background: var(--success); border-color: var(--success); color: #fff; }
+  }
+  .step-label { flex: 1; font-size: 14px; color: var(--gray-700); &.active-label { color: var(--navy); font-weight: 500; } &.done-label { color: var(--success); } }
+  .step-status { font-size: 12px; }
+}
+
+.result-content { padding: 16px; }
+.result-pre { font-family: 'Courier New', monospace; font-size: 12px; background: var(--gray-50); border: 1px solid var(--gray-100); border-radius: 8px; padding: 16px; max-height: 280px; overflow-y: auto; white-space: pre-wrap; }
+.json-key { color: var(--navy); }
+.json-str { color: var(--success); }
+.json-num { color: var(--danger); }
+
+.conf-track { width: 80px; height: 6px; background: var(--gray-100); border-radius: 3px; display: inline-block; margin-right: 6px; .conf-fill { height: 100%; border-radius: 3px; } }
+.fw-500 { font-weight: 500; }
+.mb-6 { margin-bottom: 24px; }

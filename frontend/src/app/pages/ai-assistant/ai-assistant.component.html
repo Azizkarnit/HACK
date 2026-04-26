@@ -1,0 +1,81 @@
+<div class="ai-layout">
+  <!-- CHAT AREA -->
+  <div class="chat-area">
+    <div class="chat-header">
+      <div class="chat-title">
+        <i class="fas fa-robot" style="color:var(--gold);font-size:20px"></i>
+        <span>AI Assistant</span>
+        <span class="badge badge-gold">Powered by GPT-4o + RAG</span>
+      </div>
+      <button class="btn btn-outline btn-sm" (click)="clearChat()"><i class="fas fa-trash"></i> Clear Chat</button>
+    </div>
+
+    <div class="messages-area" #chatContainer>
+      <div class="sys-msg"><i class="fas fa-info-circle"></i> Ask me anything about your institution's KPIs, trends, and reports.</div>
+
+      <ng-container *ngFor="let m of messages">
+        <!-- User Message -->
+        <div class="msg-row user-msg" *ngIf="m.role==='user'">
+          <div class="msg-bubble user-bubble">{{ m.text }}</div>
+          <div class="avatar user-av">SA</div>
+        </div>
+
+        <!-- AI Message -->
+        <div class="msg-row ai-msg" *ngIf="m.role==='ai'">
+          <div class="avatar ai-av">UC</div>
+          <div class="msg-bubble ai-bubble">
+            <p style="white-space:pre-line">{{ m.text }}</p>
+            <table class="mini-table" *ngIf="m.table">
+              <thead><tr><th>Institution</th><th>Rate</th><th>Status</th><th>Trend</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let row of m.table" [style.color]="row.bad?'var(--danger)':''">
+                  <td>{{ row.inst }}</td><td>{{ row.rate }}</td><td>{{ row.status }}</td><td>{{ row.trend }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="rec-box" *ngIf="m.recommendation">{{ m.recommendation }}</div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="typing-indicator" *ngIf="isTyping">
+        <div class="avatar ai-av">UC</div>
+        <div class="typing-bubble"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <div class="chip-row">
+        <button class="chip-btn" *ngFor="let c of suggestedChips" (click)="onChipClick(c)">{{ c }}</button>
+      </div>
+      <div class="input-row">
+        <textarea class="form-control chat-textarea" [(ngModel)]="userInput" placeholder="Ask about your institution's data..." rows="1"
+                  (keydown.enter)="$event.preventDefault(); sendMessage()"></textarea>
+        <button class="send-btn" (click)="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTEXT PANEL -->
+  <div class="context-panel">
+    <div class="ctx-section">
+      <div class="ctx-title">SCOPE</div>
+      <select class="form-control mb-2" *ngIf="role!=='admin'"><option>All Institutions</option><option>ESCT</option><option>ISG Tunis</option></select>
+      <select class="form-control"><option>All Domains</option><option>Academic</option><option>Finance</option><option>HR</option><option>ESG</option></select>
+    </div>
+
+    <div class="ctx-section">
+      <div class="ctx-title">DOCUMENTS <span class="badge badge-navy">4 indexed</span></div>
+      <div class="doc-item" *ngFor="let d of contextDocs">
+        <i class="fas fa-file-pdf" style="color:var(--danger)"></i>
+        <span>{{ d.name }}</span>
+        <span class="indexed-badge">✓</span>
+      </div>
+    </div>
+
+    <div class="ctx-section">
+      <div class="ctx-title">SUGGESTED QUESTIONS</div>
+      <button class="sq-btn" *ngFor="let q of suggestedQuestions" (click)="onChipClick(q)">{{ q }}</button>
+    </div>
+  </div>
+</div>

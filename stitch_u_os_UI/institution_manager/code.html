@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>U-OS Institution Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "secondary-fixed": "#ffdea4",
+                        "outline": "#747780",
+                        "primary-fixed-dim": "#acc7ff",
+                        "on-background": "#161b2a",
+                        "inverse-surface": "#2b3040",
+                        "surface-container": "#eaedff",
+                        "on-surface-variant": "#44474f",
+                        "surface-container-highest": "#dee2f7",
+                        "on-tertiary-container": "#d7985f",
+                        "secondary": "#7b5800",
+                        "error": "#ba1a1a",
+                        "on-tertiary-fixed-variant": "#693c0a",
+                        "surface": "#faf8ff",
+                        "tertiary": "#3c1e00",
+                        "tertiary-fixed-dim": "#fcb87d",
+                        "on-primary-fixed": "#001a40",
+                        "on-tertiary-fixed": "#2e1500",
+                        "on-secondary-container": "#735200",
+                        "outline-variant": "#c4c6d0",
+                        "tertiary-fixed": "#ffdcc1",
+                        "surface-tint": "#425e91",
+                        "surface-bright": "#faf8ff",
+                        "on-error": "#ffffff",
+                        "surface-container-high": "#e3e7fc",
+                        "primary-container": "#1b3a6b",
+                        "surface-variant": "#dee2f7",
+                        "secondary-container": "#fdc656",
+                        "tertiary-container": "#5b3000",
+                        "on-surface": "#161b2a",
+                        "inverse-primary": "#acc7ff",
+                        "on-primary-container": "#89a5dd",
+                        "background": "#faf8ff",
+                        "surface-container-low": "#f2f3ff",
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d7e2ff",
+                        "surface-dim": "#d5d9ee",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#f4be4f",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#294678",
+                        "primary": "#002452",
+                        "on-secondary": "#ffffff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-secondary-fixed-variant": "#5d4200",
+                        "inverse-on-surface": "#eef0ff",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed": "#261900"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "header_height": "64px",
+                        "gutter": "24px",
+                        "card_padding": "24px",
+                        "container_padding": "32px",
+                        "sidebar_width": "260px",
+                        "base": "8px"
+                    },
+                    fontFamily: {
+                        "h3": ["Plus Jakarta Sans"],
+                        "h1": ["Plus Jakarta Sans"],
+                        "h4": ["Plus Jakarta Sans"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-caps": ["Inter"],
+                        "body-md": ["Inter"],
+                        "button": ["Inter"],
+                        "h2": ["Plus Jakarta Sans"]
+                    },
+                    fontSize: {
+                        "h3": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "h4": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "button": ["16px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "h2": ["32px", { "lineHeight": "1.25", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased overflow-x-hidden">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-full w-[260px] bg-[#1B3A6B] dark:bg-slate-950 font-['Plus_Jakarta_Sans'] antialiased border-r border-slate-200 dark:border-slate-800 shadow-xl flex flex-col h-full py-6 z-50">
+<div class="px-6 mb-8 flex items-center gap-3">
+<div class="w-8 h-8 rounded bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-[#1B3A6B]">widgets</span>
+</div>
+<div>
+<h1 class="text-xl font-bold tracking-tight text-white">U-OS Manager</h1>
+<p class="text-xs text-slate-400">Executive Intelligence</p>
+</div>
+</div>
+<div class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-amber-400/10 text-amber-400 border-r-4 border-amber-400 font-semibold cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance">account_balance</span>
+<span>Institutions</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="admin_panel_settings">admin_panel_settings</span>
+<span>Administrative</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-white/5 transition-colors duration-200 cursor-pointer active:opacity-80" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span>Settings</span>
+</a>
+</div>
+<div class="px-6 mb-6">
+<button class="w-full flex items-center justify-center gap-2 py-3 bg-white/10 rounded-lg text-white hover:bg-white/20 transition">
+<span class="material-symbols-outlined text-sm">monitor_heart</span>
+<span class="text-sm font-semibold">System Health</span>
+</button>
+</div>
+<div class="px-4 border-t border-white/10 pt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="help">help</span>
+<span class="text-sm">Support</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors duration-200" href="#">
+<span class="material-symbols-outlined text-sm" data-icon="logout">logout</span>
+<span class="text-sm">Logout</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 w-[calc(100%-260px)] h-16 bg-white dark:bg-slate-900 font-['Plus_Jakarta_Sans'] text-sm font-medium border-b border-gray-100 dark:border-slate-800 shadow-sm flex items-center justify-between px-8 z-40">
+<div class="flex items-center gap-6">
+<div class="text-lg font-black text-[#1B3A6B] dark:text-white">Institution Manager</div>
+<nav class="hidden md:flex gap-6 mt-5">
+<a class="text-gray-500 hover:text-[#1B3A6B]" href="#">Overview</a>
+<a class="text-[#1B3A6B] border-b-2 border-[#1B3A6B] pb-5" href="#">Directory</a>
+<a class="text-gray-500 hover:text-[#1B3A6B]" href="#">Archive</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">search</span>
+<input class="pl-9 pr-4 py-2 bg-gray-50 border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-amber-400 focus:border-transparent outline-none w-64" placeholder="Search institutions..." type="text"/>
+</div>
+<button class="p-2 text-gray-500 hover:bg-gray-50 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-gray-500 hover:bg-gray-50 rounded-full transition-all">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+</button>
+<button class="bg-[#1B3A6B] text-white px-4 py-2 rounded-lg hover:bg-primary-fixed-variant transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">add</span>
+                Add Institution
+            </button>
+<div class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden border border-gray-300 ml-2">
+<img alt="Administrator Profile" class="w-full h-full object-cover" data-alt="professional headshot of a man in a business suit against a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7FRxZKXjEQW86HWXT23lnV6m7cre07f-hYzyQhKzMVwgp3Vy-vEcozqMx1gYGbpiXZ6Ff3W8XJFj7QRukXHv49TOQ1ykVVk6Ux5DexcFq_EZ7TSG8Xh2LcuZMj7bxEaG7bdoA3I6SONIOTK8vQrKBd4qr9Zrps1MMpLadMUidgTxDfmcl5hyMrXzPRiSocwYG6upYxrWPTXMJmm0iDVLtU62cPGo7QyaqV2FdAWMeHuU-fpB5NEwnluAQzN2NeL9Ib7D-XALfgvM"/>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[260px] mt-[64px] p-container_padding min-h-screen">
+<!-- Header Section -->
+<div class="mb-8">
+<h1 class="font-h1 text-h1 text-primary-container mb-2">Institutions</h1>
+<p class="font-body-lg text-body-lg text-outline">Manage all 32 affiliated institutions.</p>
+</div>
+<!-- Summary Pills -->
+<div class="flex gap-4 mb-8">
+<div class="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100">
+<div class="w-2 h-2 rounded-full bg-[#1B3A6B]"></div>
+<span class="font-label-caps text-label-caps text-on-surface">32 Total</span>
+</div>
+<div class="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="font-label-caps text-label-caps text-on-surface">29 Active</span>
+</div>
+<div class="flex items-center gap-2 bg-white px-4 py-2 rounded-full shadow-sm border border-gray-100">
+<div class="w-2 h-2 rounded-full bg-red-500"></div>
+<span class="font-label-caps text-label-caps text-on-surface">3 Inactive</span>
+</div>
+</div>
+<!-- Controls Bar -->
+<div class="bg-white p-4 rounded-xl shadow-[0_1px_4px_rgba(27,58,107,0.08)] mb-8 flex items-center justify-between">
+<div class="flex gap-4">
+<select class="h-12 px-4 bg-white border border-gray-200 rounded-lg text-sm focus:border-primary-container outline-none min-w-[150px]">
+<option>City: All</option>
+<option>Tunis</option>
+<option>Sfax</option>
+<option>Sousse</option>
+</select>
+<select class="h-12 px-4 bg-white border border-gray-200 rounded-lg text-sm focus:border-primary-container outline-none min-w-[150px]">
+<option>Type: All</option>
+<option>University</option>
+<option>Institute</option>
+</select>
+<select class="h-12 px-4 bg-white border border-gray-200 rounded-lg text-sm focus:border-primary-container outline-none min-w-[150px]">
+<option>Status: All</option>
+<option>Active</option>
+<option>Inactive</option>
+</select>
+</div>
+<div class="flex gap-2 bg-gray-50 p-1 rounded-lg border border-gray-200">
+<button class="p-2 bg-white shadow-sm rounded flex items-center justify-center text-primary-container">
+<span class="material-symbols-outlined text-sm">grid_view</span>
+</button>
+<button class="p-2 text-gray-500 hover:text-primary-container rounded flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-sm">list</span>
+</button>
+</div>
+</div>
+<!-- Cards View Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="bg-white rounded-xl p-card_padding shadow-[0_1px_4px_rgba(27,58,107,0.08)] relative overflow-hidden group cursor-pointer border border-transparent hover:border-gray-200 transition-all">
+<div class="absolute top-0 right-0 p-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                    </span>
+</div>
+<div class="flex items-start gap-4 mb-6">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low border border-gray-100 flex items-center justify-center flex-shrink-0">
+<span class="font-h3 text-h3 text-primary-container">IS</span>
+</div>
+<div>
+<h3 class="font-h4 text-h4 text-primary-container mb-1">ISET Rades</h3>
+<p class="font-body-sm text-body-sm text-outline">Institute of Technological Studies</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">STUDENTS</p>
+<p class="font-h3 text-h3 text-on-surface">3,240</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">FACULTY</p>
+<p class="font-h3 text-h3 text-on-surface">185</p>
+</div>
+</div>
+<div class="space-y-3">
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span class="text-outline font-medium">Overall Health</span>
+<span class="text-primary-container font-bold">88%</span>
+</div>
+<div class="w-full bg-gray-100 rounded-full h-1.5">
+<div class="bg-green-500 h-1.5 rounded-full" style="width: 88%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-white rounded-xl p-card_padding shadow-[0_1px_4px_rgba(27,58,107,0.08)] relative overflow-hidden group cursor-pointer border border-transparent hover:border-gray-200 transition-all">
+<div class="absolute top-0 right-0 p-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-green-50 text-green-700">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Active
+                    </span>
+</div>
+<div class="flex items-start gap-4 mb-6">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low border border-gray-100 flex items-center justify-center flex-shrink-0">
+<span class="font-h3 text-h3 text-primary-container">ES</span>
+</div>
+<div>
+<h3 class="font-h4 text-h4 text-primary-container mb-1">ESCT</h3>
+<p class="font-body-sm text-body-sm text-outline">School of Commerce Tunis</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">STUDENTS</p>
+<p class="font-h3 text-h3 text-on-surface">4,100</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">FACULTY</p>
+<p class="font-h3 text-h3 text-on-surface">220</p>
+</div>
+</div>
+<div class="space-y-3">
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span class="text-outline font-medium">Overall Health</span>
+<span class="text-secondary-container font-bold">72%</span>
+</div>
+<div class="w-full bg-gray-100 rounded-full h-1.5">
+<div class="bg-secondary-container h-1.5 rounded-full" style="width: 72%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-white rounded-xl p-card_padding shadow-[0_1px_4px_rgba(27,58,107,0.08)] relative overflow-hidden group cursor-pointer border border-transparent hover:border-gray-200 transition-all">
+<div class="absolute top-0 right-0 p-4">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700">
+<span class="w-1.5 h-1.5 rounded-full bg-red-500"></span> Inactive
+                    </span>
+</div>
+<div class="flex items-start gap-4 mb-6">
+<div class="w-12 h-12 rounded-lg bg-surface-container-low border border-gray-100 flex items-center justify-center flex-shrink-0 opacity-50">
+<span class="font-h3 text-h3 text-primary-container">IS</span>
+</div>
+<div>
+<h3 class="font-h4 text-h4 text-primary-container mb-1 opacity-70">ISG Tunis</h3>
+<p class="font-body-sm text-body-sm text-outline">Institute of Management</p>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6 opacity-70">
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">STUDENTS</p>
+<p class="font-h3 text-h3 text-on-surface">--</p>
+</div>
+<div>
+<p class="font-label-caps text-label-caps text-outline mb-1">FACULTY</p>
+<p class="font-h3 text-h3 text-on-surface">--</p>
+</div>
+</div>
+<div class="space-y-3 opacity-70">
+<div>
+<div class="flex justify-between text-xs mb-1">
+<span class="text-outline font-medium">Overall Health</span>
+<span class="text-gray-400 font-bold">N/A</span>
+</div>
+<div class="w-full bg-gray-100 rounded-full h-1.5">
+<div class="bg-gray-300 h-1.5 rounded-full" style="width: 0%"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Detail Panel (Slide-in, currently hidden but structured) -->
+<div class="fixed inset-y-0 right-0 w-[400px] bg-white shadow-[-4px_0_24px_rgba(27,58,107,0.1)] border-l border-gray-100 z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+<div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+<h2 class="font-h4 text-h4 text-primary-container">Institution Details</h2>
+<button class="p-2 text-gray-400 hover:text-gray-600 rounded-full">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="p-6 flex-1 overflow-y-auto">
+<!-- Details content would go here -->
+</div>
+</div>
+</body></html>

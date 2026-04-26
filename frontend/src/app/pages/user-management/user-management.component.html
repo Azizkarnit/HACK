@@ -1,0 +1,117 @@
+<div class="page-content" *ngIf="role==='super_admin'">
+  <div class="page-header">
+    <h1>User Management</h1>
+    <p>Manage administrator and agent accounts across all institutions.</p>
+  </div>
+
+  <div style="display:flex;justify-content:flex-end;margin-bottom:24px">
+    <button class="btn btn-primary" (click)="openAddModal()"><i class="fas fa-user-plus"></i> Add New User</button>
+  </div>
+
+  <div class="grid-3 mb-6">
+    <div class="stat-card"><div class="stat-label">Super Admins <i class="fas fa-user-shield" style="color:var(--navy)"></i></div><div class="stat-value">{{ counts.superAdmins }}</div></div>
+    <div class="stat-card warning"><div class="stat-label">Agents <i class="fas fa-user-tie" style="color:var(--gold)"></i></div><div class="stat-value">{{ counts.agents }}</div></div>
+    <div class="stat-card success"><div class="stat-label">Institution Admins <i class="fas fa-user" style="color:var(--success)"></i></div><div class="stat-value">{{ counts.admins }}</div></div>
+  </div>
+
+  <div class="filter-bar mb-6">
+    <input type="text" class="form-control" placeholder="Search by name or email..." style="flex:1" [(ngModel)]="searchTerm">
+    <select class="form-control" style="width:160px" [(ngModel)]="roleFilter">
+      <option value="">All Roles</option>
+      <option value="super_admin">Super Admin</option>
+      <option value="agent">Agent</option>
+      <option value="admin">Admin</option>
+    </select>
+    <select class="form-control" style="width:180px" [(ngModel)]="instFilter">
+      <option value="">All Institutions</option>
+      <option *ngFor="let i of institutions">{{ i }}</option>
+    </select>
+  </div>
+
+  <div class="card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>User</th><th>Role</th><th>Institution</th><th>Status</th><th>Last Login</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of filteredUsers">
+          <td>
+            <div class="user-cell">
+              <div class="user-avatar-tbl">{{ getInitials(u.full_name) }}</div>
+              <div>
+                <div class="user-name-tbl">{{ u.full_name }}</div>
+                <div class="user-email">{{ u.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge" [class]="roleBadge(u.role)">{{ roleLabel(u.role) }}</span></td>
+          <td>{{ u.institution }}</td>
+          <td>
+            <span class="status-dot" [class.active]="u.status==='active'"></span>
+            {{ u.status | titlecase }}
+          </td>
+          <td style="color:var(--gray-400);font-size:13px">{{ u.last_login }}</td>
+          <td>
+            <button class="btn-icon" (click)="openEditModal(u)" title="Edit"><i class="fas fa-pen-to-square" style="color:var(--navy)"></i></button>
+            <button class="btn-icon" (click)="resetPassword()" title="Reset Password"><i class="fas fa-key" style="color:var(--warning)"></i></button>
+            <button class="btn-icon" (click)="confirmDelete(u)" title="Delete"><i class="fas fa-trash" style="color:var(--danger)"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="access-denied" *ngIf="role!=='super_admin'">
+  <i class="fas fa-lock"></i>
+  <h2>Access Restricted</h2>
+  <p>User Management is only available to the Super Administrator.</p>
+  <a routerLink="/dashboard" class="btn btn-outline">Go Back</a>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editMode ? 'Edit User' : 'Add New User' }}</h2>
+      <button class="btn-icon" (click)="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="form-group"><label>Full Name</label><input class="form-control" type="text" [(ngModel)]="modalForm.full_name"></div>
+    <div class="form-group"><label>Email Address</label><input class="form-control" type="email" [(ngModel)]="modalForm.email"></div>
+    <div class="form-group">
+      <label>Role</label>
+      <select class="form-control" [(ngModel)]="modalForm.role">
+        <option value="agent">Agent</option><option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="form-group" *ngIf="modalForm.role==='admin'">
+      <label>Institution</label>
+      <select class="form-control" [(ngModel)]="modalForm.institution">
+        <option *ngFor="let i of institutions">{{ i }}</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Password</label><input class="form-control" type="password" [(ngModel)]="modalForm.password"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="closeModal()">Cancel</button>
+      <button class="btn btn-primary" (click)="saveUser()">{{ editMode ? 'Save Changes' : 'Create User' }}</button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelDelete()">
+  <div class="modal" style="width:400px" (click)="$event.stopPropagation()">
+    <h2 style="margin-bottom:14px">Delete User</h2>
+    <p>Are you sure you want to delete <strong>{{ deleteTarget?.full_name }}</strong>? This action cannot be undone.</p>
+    <div class="modal-footer">
+      <button class="btn btn-outline" (click)="cancelDelete()">Cancel</button>
+      <button class="btn btn-outline-danger" (click)="deleteUser()"><i class="fas fa-trash"></i> Delete User</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" *ngIf="toastMsg">
+  <div class="toast toast-success">✓ {{ toastMsg }}</div>
+</div>

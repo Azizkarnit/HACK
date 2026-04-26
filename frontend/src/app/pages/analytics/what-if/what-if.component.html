@@ -1,0 +1,87 @@
+<div class="page-content" *ngIf="!isAccessDenied">
+  <div class="page-header">
+    <h1>What-If Simulator</h1>
+    <p>Explore how a change in one KPI affects another. Uses Pearson correlation analysis on historical data.</p>
+  </div>
+
+  <!-- Steps -->
+  <div class="steps-row mb-6">
+    <div class="step"><div class="step-num">1</div><p>Choose a base KPI you want to change</p></div>
+    <i class="fas fa-arrow-right step-arrow"></i>
+    <div class="step"><div class="step-num">2</div><p>Choose a target KPI to observe impact on</p></div>
+    <i class="fas fa-arrow-right step-arrow"></i>
+    <div class="step"><div class="step-num">3</div><p>Set the change percentage and simulate</p></div>
+  </div>
+
+  <!-- Form -->
+  <div class="card mb-6">
+    <div class="simulator-card">
+      <div class="sim-section">
+        <label class="sim-label">Target Institution</label>
+        <select class="form-control mb-3" [(ngModel)]="selectedInstitution">
+          <option *ngFor="let inst of institutions" [value]="inst.id">{{ inst.name }}</option>
+        </select>
+
+        <label class="sim-label">If we change this (Base KPI)</label>
+        <select class="form-control" [(ngModel)]="baseKpi">
+          <option *ngFor="let k of kpis" [value]="k.code">{{ k.name }}</option>
+        </select>
+      </div>
+
+      <div class="sim-section">
+        <label class="sim-label">What is the impact on (Target KPI)</label>
+        <select class="form-control" [(ngModel)]="targetKpi">
+          <option *ngFor="let k of kpis" [value]="k.code">{{ k.name }}</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Change Percentage</label>
+        <input type="range" min="-50" max="150" step="5" [(ngModel)]="changePct" class="range-input">
+        <div class="change-display" [style.color]="changeColor">{{ changeLabel }}</div>
+        <div class="preset-chips">
+          <button *ngFor="let p of presets" class="preset-chip" [class.active]="changePct===p" (click)="setPreset(p)">
+            {{ p > 0 ? '+' : '' }}{{ p }}%
+          </button>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full btn-lg" (click)="runSimulation()" [disabled]="loading">
+      <i class="fas" [class.fa-play]="!loading" [class.fa-spinner]="loading" [class.fa-spin]="loading"></i>
+      {{ loading ? 'Running Simulation...' : 'Run Simulation' }}
+    </button>
+  </div>
+
+  <!-- Results -->
+  <ng-container *ngIf="showResults">
+    <div class="card mb-6">
+      <h2 class="result-headline">If <span class="hl">{{ baseKpi }}</span> increases by <span class="hl">{{ changeLabel }}</span>, then <span class="hl">{{ targetKpi }}</span> is projected to change by <span style="color:var(--danger)">{{ result.impact }}</span></h2>
+    </div>
+
+    <div class="grid-4 mb-6">
+      <div class="stat-card success"><div class="stat-label">Pearson Correlation</div><div class="stat-value">{{ result.correlation }}</div><span class="badge badge-success">Strong Positive</span></div>
+      <div class="stat-card success"><div class="stat-label">Direction</div><div class="stat-value">▲</div><div class="stat-sub">Positive</div></div>
+      <div class="stat-card danger"><div class="stat-label">Simulated Impact</div><div class="stat-value">{{ result.impact }}</div><div class="stat-sub">on {{ targetKpi }}</div></div>
+      <div class="stat-card danger"><div class="stat-label">Projected New Value</div><div class="stat-value">{{ result.newValue }}</div><div class="stat-sub">was {{ result.originalValue }}</div></div>
+    </div>
+
+    <div class="card mb-6">
+      <div class="card-header"><h3 class="card-title">Historical Relationship — {{ baseKpi }} vs {{ targetKpi }}</h3></div>
+      <canvas #scatterChart height="300"></canvas>
+    </div>
+
+    <div class="ai-panel">
+      <div class="ai-panel-header"><i class="fas fa-robot ai-icon"></i><span class="ai-title">Simulation Narrative</span></div>
+      <div class="ai-content">Historical data from the past 24 months shows a strong correlation (r = {{ result.correlation }}) between {{ baseKpi }} and {{ targetKpi }} across institutions. A {{ changeLabel }} change in {{ baseKpi }} has historically been associated with a {{ result.impact }} change in {{ targetKpi }}. This simulation should be treated as a directional indicator, not a precise prediction.</div>
+      <p class="ai-warning"><i class="fas fa-circle-info"></i> This is a statistical correlation, not a guaranteed causal relationship.</p>
+    </div>
+  </ng-container>
+</div>
+
+<!-- Access Denied -->
+<div class="access-denied" *ngIf="isAccessDenied">
+  <i class="fas fa-lock"></i>
+  <h2>Access Restricted</h2>
+  <p>The What-If Simulator is available to Agents and Super Admins only.</p>
+  <a routerLink="/institution" class="btn btn-outline">Go to Dashboard</a>
+</div>

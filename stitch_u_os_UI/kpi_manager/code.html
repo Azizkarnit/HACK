@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>U-OS KPI Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "secondary-fixed": "#ffdea4",
+                      "on-secondary": "#ffffff",
+                      "on-tertiary-container": "#d7985f",
+                      "error-container": "#ffdad6",
+                      "on-tertiary-fixed": "#2e1500",
+                      "surface-tint": "#425e91",
+                      "surface-container-highest": "#dee2f7",
+                      "on-secondary-container": "#735200",
+                      "outline-variant": "#c4c6d0",
+                      "on-surface": "#161b2a",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#2b3040",
+                      "secondary-container": "#fdc656",
+                      "inverse-on-surface": "#eef0ff",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed": "#d7e2ff",
+                      "surface-container-high": "#e3e7fc",
+                      "inverse-primary": "#acc7ff",
+                      "surface-variant": "#dee2f7",
+                      "on-primary": "#ffffff",
+                      "on-background": "#161b2a",
+                      "secondary-fixed-dim": "#f4be4f",
+                      "on-primary-fixed": "#001a40",
+                      "tertiary-fixed": "#ffdcc1",
+                      "on-primary-container": "#89a5dd",
+                      "primary-container": "#1b3a6b",
+                      "surface-dim": "#d5d9ee",
+                      "surface-container-low": "#f2f3ff",
+                      "surface": "#faf8ff",
+                      "on-primary-fixed-variant": "#294678",
+                      "background": "#faf8ff",
+                      "secondary": "#7b5800",
+                      "primary": "#002452",
+                      "tertiary-fixed-dim": "#fcb87d",
+                      "tertiary": "#3c1e00",
+                      "outline": "#747780",
+                      "on-secondary-fixed": "#261900",
+                      "on-tertiary": "#ffffff",
+                      "error": "#ba1a1a",
+                      "on-error-container": "#93000a",
+                      "on-tertiary-fixed-variant": "#693c0a",
+                      "surface-bright": "#faf8ff",
+                      "primary-fixed-dim": "#acc7ff",
+                      "on-surface-variant": "#44474f",
+                      "tertiary-container": "#5b3000",
+                      "on-secondary-fixed-variant": "#5d4200",
+                      "surface-container": "#eaedff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "header_height": "64px",
+                      "container_padding": "32px",
+                      "sidebar_width": "260px",
+                      "gutter": "24px",
+                      "card_padding": "24px",
+                      "base": "8px"
+              },
+              "fontFamily": {
+                      "h1": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "h4": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "label-caps": [
+                              "Inter"
+                      ],
+                      "h3": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "h2": [
+                              "Plus Jakarta Sans"
+                      ],
+                      "body-sm": [
+                              "Inter"
+                      ],
+                      "button": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "h1": [
+                              "40px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "h4": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "label-caps": [
+                              "12px",
+                              {
+                                      "lineHeight": "1",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "h3": [
+                              "24px",
+                              {
+                                      "lineHeight": "1.3",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "h2": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.25",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-sm": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.5",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "button": [
+                              "16px",
+                              {
+                                      "lineHeight": "1",
+                                      "fontWeight": "600"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+          .material-symbols-outlined {
+              font-family: 'Material Symbols Outlined';
+              font-weight: normal;
+              font-style: normal;
+              font-size: 24px;
+              line-height: 1;
+              letter-spacing: normal;
+              text-transform: none;
+              display: inline-block;
+              white-space: nowrap;
+              word-wrap: normal;
+              direction: ltr;
+              -webkit-font-feature-settings: 'liga';
+              -webkit-font-smoothing: antialiased;
+          }
+      </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-8 bg-white/95 backdrop-blur-sm h-16 border-b border-gray-200 dark:border-gray-800 shadow-sm font-plus-jakarta text-sm font-medium">
+<div class="flex items-center gap-6">
+<div class="text-xl font-bold text-blue-900 dark:text-white">U-OS KPI Manager</div>
+<div class="hidden md:flex items-center gap-1 ml-4 h-full">
+<a class="h-16 flex items-center px-4 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" href="#">Dashboard</a>
+<a class="h-16 flex items-center px-4 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" href="#">Analytics</a>
+<a class="h-16 flex items-center px-4 text-blue-900 dark:text-white border-b-2 border-amber-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" href="#">KPI Library</a>
+<a class="h-16 flex items-center px-4 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" href="#">Strategy Map</a>
+<a class="h-16 flex items-center px-4 text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" href="#">Reports</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="h-[40px] pl-10 pr-4 rounded bg-surface-container-low border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary text-body-sm w-[200px]" placeholder="Search..." type="text"/>
+</div>
+<button class="p-2 text-outline hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-outline hover:bg-surface-container-highest rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<button class="text-body-sm font-button text-primary px-3 py-1.5 border border-outline-variant rounded hover:bg-surface-container-low transition-colors">Institution Switcher</button>
+<img alt="Executive User Profile" class="w-8 h-8 rounded-full border border-outline-variant object-cover" data-alt="professional corporate headshot of a smiling executive wearing a navy suit against a clean gray background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCsrIielbMjz-4IGIZ6kNPExcXtYKivVs9cHSY0DXw858BaE-cwX1F3q81uy2Cc6yfcdHo395JlvevflUpZavbWtW3COVXO9oUM4Aoh6DzY2cUj3ECxgiSPe2VVENUreq7ws_ilTWiw6U9Khk7c6rbhMes1N7TfigH5OulHW5Onhh6ruM-i8VjPyq3YzNVSNvcqATe5c_j6rKXD5JBdw70b_YnZ40isBaE5aD_Z7OntYYTINWP5KGJdCe7OXOG9BjqwpYTny798fo"/>
+</div>
+</nav>
+<!-- Main Content Layout -->
+<div class="flex flex-1 mt-[64px] h-[calc(100vh-64px)] overflow-hidden">
+<!-- LEFT PANEL (KPI List) -->
+<aside class="w-[340px] bg-white border-r border-outline-variant flex flex-col h-full flex-shrink-0">
+<!-- Search & Filters -->
+<div class="p-4 border-b border-outline-variant space-y-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full h-[40px] pl-10 pr-4 rounded bg-surface-container-lowest border border-outline-variant focus:border-primary focus:ring-1 focus:ring-primary text-body-sm" placeholder="Search KPIs..." type="text"/>
+</div>
+<div class="flex gap-2">
+<select class="flex-1 h-[36px] rounded bg-surface-container-lowest border border-outline-variant text-body-sm px-2 focus:border-primary">
+<option>All Domains</option>
+<option>Academic</option>
+<option>Financial</option>
+<option>Operations</option>
+</select>
+<select class="flex-1 h-[36px] rounded bg-surface-container-lowest border border-outline-variant text-body-sm px-2 focus:border-primary">
+<option>All Inst.</option>
+<option>IPEIEM</option>
+<option>USFQ</option>
+</select>
+</div>
+</div>
+<!-- List -->
+<div class="flex-1 overflow-y-auto bg-surface-bright">
+<!-- Selected Item -->
+<div class="p-4 border-b border-outline-variant bg-surface-container-low cursor-pointer border-l-4 border-l-primary">
+<div class="flex justify-between items-start mb-1">
+<span class="font-h4 text-h4 text-on-surface">Dropout Rate</span>
+<span class="text-error font-button text-button">18.4%</span>
+</div>
+<div class="flex items-center gap-2 text-body-sm text-on-surface-variant mb-2">
+<span class="px-2 py-0.5 bg-error-container text-on-error-container rounded text-label-caps font-label-caps">CRITICAL</span>
+<span>IPEIEM • Academic</span>
+</div>
+<div class="text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-error" data-icon="trending_up">trending_up</span>
+                        +2.1% vs last month
+                    </div>
+</div>
+<!-- Unselected Item 1 -->
+<div class="p-4 border-b border-outline-variant bg-white hover:bg-surface-container-lowest cursor-pointer transition-colors">
+<div class="flex justify-between items-start mb-1">
+<span class="font-h4 text-body-md font-semibold text-on-surface">Enrollment Growth</span>
+<span class="text-primary font-button text-button">5.2%</span>
+</div>
+<div class="flex items-center gap-2 text-body-sm text-on-surface-variant mb-2">
+<span class="px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed rounded text-label-caps font-label-caps">WARNING</span>
+<span>Global • Financial</span>
+</div>
+<div class="text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline" data-icon="trending_flat">trending_flat</span>
+                        Steady vs last month
+                    </div>
+</div>
+<!-- Unselected Item 2 -->
+<div class="p-4 border-b border-outline-variant bg-white hover:bg-surface-container-lowest cursor-pointer transition-colors">
+<div class="flex justify-between items-start mb-1">
+<span class="font-h4 text-body-md font-semibold text-on-surface">Faculty Retention</span>
+<span class="text-[#10b981] font-button text-button">94.1%</span>
+</div>
+<div class="flex items-center gap-2 text-body-sm text-on-surface-variant mb-2">
+<span class="px-2 py-0.5 bg-[#d1fae5] text-[#065f46] rounded text-label-caps font-label-caps">HEALTHY</span>
+<span>USFQ • HR</span>
+</div>
+<div class="text-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-[#10b981]" data-icon="trending_up">trending_up</span>
+                        +0.5% vs last month
+                    </div>
+</div>
+</div>
+</aside>
+<!-- RIGHT PANEL (Detail View) -->
+<main class="flex-1 bg-[#F8F9FB] p-[24px] overflow-y-auto flex flex-col gap-[24px]">
+<!-- Detail Header & Actions -->
+<div class="flex flex-col md:flex-row md:items-start justify-between gap-4">
+<div>
+<div class="flex items-center gap-3 mb-2">
+<h1 class="font-h2 text-h2 text-on-surface">Dropout Rate</h1>
+<span class="px-3 py-1 bg-error-container text-on-error-container rounded-full text-label-caps font-label-caps">CRITICAL</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl">
+                        Measures the percentage of students who leave the institution before completing their program. Currently tracking above acceptable thresholds for IPEIEM.
+                    </p>
+</div>
+<div class="flex gap-3 shrink-0">
+<button class="h-[48px] px-6 rounded-lg bg-surface-container-highest text-on-surface font-button text-button flex items-center gap-2 hover:bg-surface-variant transition-colors border border-outline-variant shadow-[0_1px_4px_rgba(27,58,107,0.08)]">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+                        View Full History
+                    </button>
+<button class="h-[48px] px-6 rounded-lg bg-primary text-on-primary font-button text-button flex items-center gap-2 hover:bg-on-primary-fixed-variant transition-colors shadow-[0_1px_4px_rgba(27,58,107,0.08)]">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+                        Run AI Analysis
+                    </button>
+</div>
+</div>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-[24px]">
+<!-- Main Chart Card -->
+<div class="lg:col-span-2 bg-white rounded-xl p-[24px] shadow-[0_1px_4px_rgba(27,58,107,0.08)] border border-outline-variant flex flex-col">
+<div class="flex justify-between items-center mb-6">
+<h3 class="font-h3 text-h3 text-on-surface">12-Month Trend &amp; Forecast</h3>
+<div class="flex gap-2">
+<button class="p-2 text-outline hover:bg-surface-container-highest rounded transition-colors" title="Export Data">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</button>
+<select class="h-[36px] rounded bg-surface-container-lowest border border-outline-variant text-body-sm px-2 focus:border-primary">
+<option>Monthly</option>
+<option>Quarterly</option>
+</select>
+</div>
+</div>
+<div class="flex-1 bg-surface-container-low rounded border border-outline-variant min-h-[300px] flex items-center justify-center relative overflow-hidden">
+<!-- Decorative Chart Placeholder representing Chart.js -->
+<div class="absolute bottom-0 w-full h-[200px] flex items-end px-4 gap-2 opacity-50">
+<div class="w-full bg-primary/20 h-[30%]"></div>
+<div class="w-full bg-primary/30 h-[40%]"></div>
+<div class="w-full bg-primary/40 h-[35%]"></div>
+<div class="w-full bg-primary/50 h-[50%]"></div>
+<div class="w-full bg-primary/60 h-[45%]"></div>
+<div class="w-full bg-primary/70 h-[60%]"></div>
+<div class="w-full bg-primary/80 h-[75%] relative">
+<div class="absolute top-0 right-0 w-3 h-3 rounded-full bg-primary -mt-1.5 -mr-1.5 ring-4 ring-white"></div>
+</div>
+<div class="w-full bg-outline-variant/30 h-[85%] border-t-2 border-dashed border-outline"></div>
+<div class="w-full bg-outline-variant/30 h-[95%] border-t-2 border-dashed border-outline"></div>
+</div>
+<span class="text-on-surface-variant font-body-md z-10 bg-white/80 px-4 py-2 rounded">Chart.js Instance (Simulated)</span>
+</div>
+</div>
+<!-- Stats & AI Analysis Panel -->
+<div class="lg:col-span-1 flex flex-col gap-[24px]">
+<!-- Current Stat Card -->
+<div class="bg-white rounded-xl p-[24px] shadow-[0_1px_4px_rgba(27,58,107,0.08)] border border-outline-variant flex flex-col justify-center text-center">
+<span class="font-body-sm text-body-sm text-on-surface-variant mb-2">Current Value</span>
+<div class="font-h1 text-[48px] font-bold text-error leading-none mb-2">18.4%</div>
+<div class="flex items-center justify-center gap-1 text-error font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="arrow_upward">arrow_upward</span>
+<span>2.1% vs Target (16.3%)</span>
+</div>
+</div>
+<!-- AI Insights (Pre-rendered for display) -->
+<div class="bg-gradient-to-br from-surface to-primary-fixed/20 rounded-xl p-[24px] shadow-[0_1px_4px_rgba(27,58,107,0.08)] border border-primary-fixed flex-1 flex flex-col">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-primary" data-icon="psychology">psychology</span>
+<h4 class="font-h4 text-h4 text-primary">AI Insights</h4>
+</div>
+<div class="space-y-4">
+<div class="bg-white/60 p-3 rounded border border-white">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">ANOMALY DETECTED</span>
+<p class="font-body-sm text-body-sm text-on-surface">Unusual spike in 2nd-year engineering cohorts over the last 45 days.</p>
+</div>
+<div class="bg-white/60 p-3 rounded border border-white">
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-1">FORECAST</span>
+<p class="font-body-sm text-body-sm text-on-surface">Expected to reach 19.2% by Q3 if current early-withdrawal trends continue.</p>
+</div>
+<div>
+<span class="font-label-caps text-label-caps text-on-surface-variant block mb-2 mt-4">RECOMMENDED ACTIONS</span>
+<ul class="space-y-2">
+<li class="flex items-start gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5" data-icon="check_circle">check_circle</span>
+                                        Initiate targeted advising for at-risk engineering students.
+                                    </li>
+<li class="flex items-start gap-2 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[18px] text-secondary mt-0.5" data-icon="check_circle">check_circle</span>
+                                        Review financial aid processing times for delayed disbursements.
+                                    </li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

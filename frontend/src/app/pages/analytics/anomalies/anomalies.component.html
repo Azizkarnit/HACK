@@ -1,0 +1,62 @@
+<div class="page-content">
+  <div class="summary-bar mb-6">
+    <div class="stat-card danger" (click)="activeSeverity='critical'" style="cursor:pointer">
+      <div class="stat-label">Critical Anomalies <i class="fas fa-triangle-exclamation" style="color:var(--danger)"></i></div>
+      <div class="stat-value">{{ criticalCount }}</div>
+    </div>
+    <div class="stat-card warning" (click)="activeSeverity='warning'" style="cursor:pointer">
+      <div class="stat-label">Warnings <i class="fas fa-exclamation-circle" style="color:var(--warning)"></i></div>
+      <div class="stat-value">{{ warningCount }}</div>
+    </div>
+    <div class="stat-card success" (click)="activeSeverity='all'" style="cursor:pointer">
+      <div class="stat-label">Normal KPIs <i class="fas fa-check-circle" style="color:var(--success)"></i></div>
+      <div class="stat-value">{{ normalCount }}</div>
+    </div>
+  </div>
+
+  <div class="filter-bar mb-6">
+    <span class="filter-label">Filter by:</span>
+    <div class="severity-group">
+      <button class="sev-btn" *ngFor="let s of ['all','critical','warning']" [class.active]="activeSeverity===s" (click)="activeSeverity=s">
+        {{ s | titlecase }}
+      </button>
+    </div>
+  </div>
+
+  <div class="anomaly-cards">
+    <div class="anomaly-card" *ngFor="let a of filtered; let i=index"
+         [style.border-left-color]="borderColor(a.severity)">
+      <div class="ac-top">
+        <span class="badge" [class]="badgeClass(a.severity)">{{ a.severity | titlecase }}</span>
+        <span class="ac-kpi">{{ a.kpi }}</span>
+        <span class="dot" style="margin:0 4px"></span>
+        <span class="ac-inst">{{ a.institution }}</span>
+        <div class="ac-right">
+          <span class="badge badge-navy">{{ a.domain }}</span>
+          <span class="ac-time">{{ a.duration }}</span>
+        </div>
+      </div>
+
+      <div class="ac-data-row">
+        <div class="ac-datum"><label>Current Value</label><span [style.color]="borderColor(a.severity)">{{ a.current }}</span></div>
+        <div class="ac-datum"><label>Expected Range</label><span>{{ a.expected }}</span></div>
+        <div class="ac-datum"><label>Z-Score</label><span>{{ a.zscore }}</span></div>
+        <div class="ac-datum"><label>Duration</label><span>{{ a.duration }}</span></div>
+      </div>
+
+      <button class="expand-link" (click)="toggleExpand(i)">
+        See AI Explanation <i class="fas" [class.fa-chevron-down]="!expandedCards[i]" [class.fa-chevron-up]="expandedCards[i]"></i>
+      </button>
+      <div class="ac-explanation" *ngIf="expandedCards[i]">
+        <i class="fas fa-robot" style="color:var(--gold)"></i>
+        <span>{{ a.explanation }}</span>
+      </div>
+
+      <div class="ac-actions">
+        <button class="btn btn-outline btn-sm" (click)="viewDetails(a)">View KPI Details <i class="fas fa-arrow-right"></i></button>
+        <button class="btn btn-outline-success btn-sm" (click)="resolve(a.id)"><i class="fas fa-check"></i> Mark as Resolved</button>
+        <button class="btn btn-outline btn-sm" (click)="exportAnomaly(a)"><i class="fas fa-download"></i> Export</button>
+      </div>
+    </div>
+  </div>
+</div>

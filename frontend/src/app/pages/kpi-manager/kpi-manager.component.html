@@ -1,0 +1,91 @@
+<div class="kpi-layout">
+  <!-- LEFT PANEL -->
+  <div class="kpi-list-panel">
+    <div class="kpi-list-header">
+      <input type="text" class="form-control" placeholder="Search KPIs..." [(ngModel)]="searchTerm">
+      <div class="kpi-filters">
+        <select class="form-control" [(ngModel)]="domainFilter">
+          <option value="">All Domains</option>
+          <option *ngFor="let d of domains">{{ d }}</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="kpi-items">
+      <div class="kpi-item" *ngFor="let k of filteredKpis"
+           [class.active]="selectedKpi?.name === k.name"
+           (click)="selectKpi(k)">
+        <div class="ki-top">
+          <span class="domain-dot" [style.background]="domainColor(k.domain)"></span>
+          <span class="ki-name">{{ k.name }}</span>
+          <span class="badge" [class]="severityBadge(k.severity)">{{ k.severity | titlecase }}</span>
+        </div>
+        <div class="ki-sub">
+          <span>{{ k.institution }}</span>
+          <span>{{ k.value }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="kpi-detail-panel">
+    <div class="empty-state" *ngIf="!selectedKpi">
+      <i class="fas fa-chart-bar"></i>
+      <h3>Select a KPI to view details</h3>
+      <p>Choose from the list on the left</p>
+    </div>
+
+    <ng-container *ngIf="selectedKpi">
+      <!-- Detail Header -->
+      <div class="card mb-4">
+        <div class="dh-top">
+          <span class="badge badge-navy">{{ selectedKpi.domain }}</span>
+          <h2 class="dh-name">{{ selectedKpi.name }}</h2>
+          <span class="badge" [class]="severityBadge(selectedKpi.severity)">{{ selectedKpi.severity | titlecase }}</span>
+        </div>
+        <div class="dh-sub">{{ selectedKpi.institution }} <span class="float-right">Last updated: 2 hours ago</span></div>
+        <div class="dh-value" [style.color]="selectedKpi.severity==='critical'?'var(--danger)':selectedKpi.severity==='warning'?'var(--warning)':'var(--navy)'">
+          {{ selectedKpi.value }}
+        </div>
+        <div class="dh-stats">
+          <span><label>Expected Range</label> 10–13%</span>
+          <span><label>Target</label> &lt; 10%</span>
+          <span><label>Unit</label> Percentage</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="action-row mb-4">
+        <button class="btn btn-primary" (click)="runAi()" [disabled]="aiLoading">
+          <i class="fas" [class.fa-robot]="!aiLoading" [class.fa-spinner]="aiLoading" [class.fa-spin]="aiLoading"></i>
+          {{ aiLoading ? 'Analyzing...' : 'Run AI Analysis' }}
+        </button>
+        <button class="btn btn-outline"><i class="fas fa-history"></i> View Full History</button>
+        <button class="btn btn-outline"><i class="fas fa-download"></i> Export Data</button>
+      </div>
+
+      <!-- AI Analysis Panel -->
+      <div class="ai-panel mb-4" *ngIf="showAiPanel">
+        <div class="ai-panel-header"><i class="fas fa-robot ai-icon"></i><span class="ai-title">AI Analysis Results</span></div>
+        <div class="ai-section">
+          <h4><span class="badge badge-critical">Critical Anomaly Detected</span></h4>
+          <p>Z-score of 3.8 — significantly above the 2-standard-deviation threshold. This KPI has been deteriorating for 6 consecutive months.</p>
+        </div>
+        <div class="ai-section">
+          <h4>Forecast</h4>
+          <p>Based on current trend, dropout rate is projected to reach 20.2% in 3 months if no intervention is taken.</p>
+        </div>
+        <div class="ai-section">
+          <h4>Recommendations</h4>
+          <ol>
+            <li>Immediately identify at-risk student cohorts using enrollment + attendance cross-data.</li>
+            <li>Implement emergency academic support workshops.</li>
+            <li>Review and revise academic support policy before next semester.</li>
+            <li>Schedule weekly monitoring until rate drops below 15%.</li>
+          </ol>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>

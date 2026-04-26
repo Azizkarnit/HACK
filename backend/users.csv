@@ -1,0 +1,4 @@
+id,institution_id,full_name,email,role
+434d05d6-c105-4084-9544-23ab0ec6792a,82157f56-122f-41a1-8c59-c3a8085db0b9,HQ Data Agent,agent@ucar.tn,agent
+3162de05-b33b-4a86-bc5e-817dd1e20e8a,3aeadf39-a8bc-4c45-aa0d-2d7e53ddaa47,ISG Administrator,admin@local.tn,admin
+c5f26541-dff7-4574-9091-358a6c3baf05,null,null,admin@admin.com,agent

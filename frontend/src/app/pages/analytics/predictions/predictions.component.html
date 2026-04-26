@@ -1,0 +1,66 @@
+<div class="page-content">
+  <div class="page-header">
+    <h1>KPI Predictions &amp; Forecasting</h1>
+    <p>Select a KPI to see its historical trend and AI-generated forecast for the next 3 periods.</p>
+  </div>
+
+  <!-- Selection Panel -->
+  <div class="card mb-6 selection-panel">
+    <div class="grid-4" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; align-items: flex-end;">
+      <div class="form-group">
+        <label>Institution</label>
+        <select class="form-control" [(ngModel)]="selectedInstId">
+          <option *ngFor="let inst of institutions" [value]="inst.id">{{ inst.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Target KPI</label>
+        <select class="form-control" [(ngModel)]="selectedKpi">
+          <option *ngFor="let k of kpis" [value]="k.code">{{ k.name }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Forecast Horizon</label>
+        <select class="form-control" [(ngModel)]="horizon">
+          <option *ngFor="let h of horizons" [value]="h.value">{{ h.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-primary btn-full" (click)="generate()" [disabled]="loading">
+          <i class="fas" [class.fa-wand-magic-sparkles]="!loading" [class.fa-spinner]="loading" [class.fa-spin]="loading"></i>
+          {{ loading ? 'Generating...' : 'Generate Forecast' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading" style="text-align: center; padding: 40px;">
+    <div class="spinner mb-3"></div>
+    <p>AI is processing historical trends and running Time-Series models...</p>
+  </div>
+
+  <ng-container *ngIf="generated && !loading">
+    <!-- Forecast Chart -->
+    <div class="card mb-6">
+      <div class="card-header">
+        <h3 class="card-title">Forecast Analysis</h3>
+        <span style="font-size:13px;color:var(--gray-400)">Jan 2024 – Dec 2024 + AI Forecast Window</span>
+      </div>
+      <canvas #forecastChart height="320"></canvas>
+      <div class="forecast-chips" style="display: flex; gap: 15px; margin-top: 20px;">
+        <div class="fc-chip" *ngFor="let fc of forecasts" style="background: var(--surface-2); padding: 15px; border-radius: 8px; flex: 1; border: 1px solid var(--border);">
+          <div class="fc-label" style="font-size: 12px; color: var(--gray-400);">{{ fc.label }}</div>
+          <div class="fc-value" style="font-size: 20px; font-weight: 700; color: var(--gold);">{{ fc.value }}</div>
+          <div class="fc-conf" style="font-size: 11px; color: var(--success);">Confidence: {{ fc.confidence }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Interpretation -->
+    <div class="ai-panel mb-6">
+      <div class="ai-panel-header"><i class="fas fa-robot ai-icon"></i><span class="ai-title">AI Forecast Interpretation</span></div>
+      <div class="ai-content">The model predicts a consistent trajectory based on the last 12 months of data. The confidence score reflects the stability of historical variance. Higher volatility in recent months typically reduces the forecast confidence for longer horizons.</div>
+    </div>
+  </ng-container>
+</div>

@@ -1,0 +1,114 @@
+<div class="page-content">
+
+  <!-- STAT CARDS -->
+  <div class="grid-4 mb-6">
+    <div class="stat-card" *ngFor="let c of statCards" [class]="c.color">
+      <div class="stat-label">
+        {{ c.label }}
+        <i class="fas {{ c.icon }}" [style.color]="c.color === 'danger' ? 'var(--danger)' : c.color === 'success' ? 'var(--success)' : 'var(--navy)'"></i>
+      </div>
+      <div class="stat-value">{{ c.value }}</div>
+      <div class="stat-sub" [style.color]="c.subColor === 'danger' ? 'var(--danger)' : c.subColor === 'success' ? 'var(--success)' : 'var(--gray-400)'">
+        {{ c.sub }}
+      </div>
+    </div>
+  </div>
+
+  <!-- TWO COLUMN: Table + Alerts -->
+  <div class="two-col-row mb-6">
+
+    <!-- Institution Health Table -->
+    <div class="card health-card">
+      <div class="card-header">
+        <h3 class="card-title">Institution Health Overview</h3>
+        <input type="text" class="form-control search-sm" placeholder="Search..." [(ngModel)]="searchTerm">
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Institution</th>
+            <th>Academic</th>
+            <th>Finance</th>
+            <th>HR</th>
+            <th>ESG</th>
+            <th>Alerts</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let inst of filteredInstitutions">
+            <td class="inst-name">{{ inst.name }}</td>
+            <td><span class="status-chip" [class]="getSeverityClass(inst.academic)">
+              <span class="dot" [class]="'dot-' + getSeverityClass(inst.academic)"></span>{{ inst.academic }}
+            </span></td>
+            <td><span class="status-chip" [class]="getSeverityClass(inst.finance)">
+              <span class="dot" [class]="'dot-' + getSeverityClass(inst.finance)"></span>{{ inst.finance }}
+            </span></td>
+            <td><span class="status-chip" [class]="getSeverityClass(inst.hr)">
+              <span class="dot" [class]="'dot-' + getSeverityClass(inst.hr)"></span>{{ inst.hr }}
+            </span></td>
+            <td><span class="status-chip" [class]="getSeverityClass(inst.esg)">
+              <span class="dot" [class]="'dot-' + getSeverityClass(inst.esg)"></span>{{ inst.esg }}
+            </span></td>
+            <td>
+              <span *ngIf="inst.alerts > 0" class="badge badge-critical">{{ inst.alerts }}</span>
+              <span *ngIf="inst.alerts === 0" class="muted-dash">—</span>
+            </td>
+            <td><button class="btn btn-outline btn-sm" (click)="viewInstitution(inst)">View →</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Alerts Panel -->
+    <div class="card alerts-card">
+      <div class="card-header">
+        <h3 class="card-title">Recent Alerts</h3>
+        <a href="/alerts" class="view-all-link">View All</a>
+      </div>
+      <div class="alerts-list">
+        <div class="alert-row" *ngFor="let a of alerts">
+          <span class="dot" [class]="dotClass(a.severity)"></span>
+          <div class="alert-content">
+            <div class="alert-inst">{{ a.institution }}</div>
+            <div class="alert-msg">{{ a.message }}</div>
+          </div>
+          <div class="alert-time">{{ a.time }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI COMPARISON CHART -->
+  <div class="card mb-6">
+    <div class="card-header">
+      <h3 class="card-title">Cross-Institution KPI Comparison</h3>
+      <select class="form-control sel-domain" [(ngModel)]="selectedDomain" (change)="onDomainChange()">
+        <option *ngFor="let d of domains">{{ d }}</option>
+      </select>
+    </div>
+    <div class="chart-wrap">
+      <canvas #barChart height="300"></canvas>
+    </div>
+    <p class="chart-note">Score = composite KPI health index (0–100). Red zone below 50.</p>
+  </div>
+
+  <!-- AI STRATEGIC INSIGHT -->
+  <div class="ai-panel">
+    <div class="ai-panel-header">
+      <i class="fas fa-robot ai-icon"></i>
+      <span class="ai-title">AI Strategic Insight</span>
+      <span class="badge badge-gold">Powered by GPT-4o</span>
+    </div>
+    <div class="ai-content" *ngIf="!aiLoading">{{ aiText }}</div>
+    <div class="ai-skeleton" *ngIf="aiLoading">
+      <div class="skeleton" style="height:16px; margin-bottom:10px; border-radius:6px;"></div>
+      <div class="skeleton" style="height:16px; width:85%; margin-bottom:10px; border-radius:6px;"></div>
+      <div class="skeleton" style="height:16px; width:70%; border-radius:6px;"></div>
+    </div>
+    <button class="btn btn-outline btn-sm mt-3" (click)="regenerateInsight()" [disabled]="aiLoading">
+      <i class="fas fa-rotate-right"></i> Regenerate Insight
+    </button>
+  </div>
+
+</div>

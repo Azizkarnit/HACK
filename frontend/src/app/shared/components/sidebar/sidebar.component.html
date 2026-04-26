@@ -1,0 +1,35 @@
+<nav class="sidebar">
+  <!-- Logo -->
+  <div class="sidebar-logo">
+    <div class="logo-mark">UC</div>
+    <span class="logo-text">U-OS</span>
+  </div>
+
+  <!-- Nav Sections -->
+  <div class="sidebar-nav">
+    <ng-container *ngFor="let section of navSections">
+      <ng-container *ngIf="visibleItems(section.items).length > 0">
+        <div class="nav-section-label">{{ section.label }}</div>
+        <a *ngFor="let item of visibleItems(section.items)"
+           [routerLink]="item.route"
+           class="nav-item"
+           [class.active]="isActive(item.route)">
+          <i class="fas {{ item.icon }}"></i>
+          <span>{{ item.label }}</span>
+        </a>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <!-- User Footer -->
+  <div class="sidebar-footer">
+    <div class="user-avatar">{{ getInitials() }}</div>
+    <div class="user-info">
+      <div class="user-name">{{ currentUser?.full_name || 'User' }}</div>
+      <div class="role-badge">{{ getRoleBadge() }}</div>
+    </div>
+    <button class="btn-icon logout-btn" (click)="logout()" title="Sign Out">
+      <i class="fas fa-sign-out-alt"></i>
+    </button>
+  </div>
+</nav>

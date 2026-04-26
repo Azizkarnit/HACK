@@ -1,0 +1,139 @@
+<div class="page-content">
+  <div class="page-header">
+    <h1>Data Upload &amp; Extraction</h1>
+    <p>Upload documents and let the AI extract and structure the data automatically.</p>
+  </div>
+
+  <div class="ingestion-cols">
+    <!-- LEFT: Upload + Config -->
+    <div class="left-col">
+      <div class="card mb-6">
+        <div class="dropzone" [class.drag-over]="isDragOver" [class.has-file]="selectedFile"
+             (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)">
+          <ng-container *ngIf="!selectedFile">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <h3>Drag your file here</h3>
+            <span>or</span>
+            <label class="btn btn-outline btn-sm" for="fileInput">Browse Files</label>
+            <input type="file" id="fileInput" hidden (change)="onFileSelect($event)">
+            <small>Supported: PDF · PNG · JPG · XLSX · CSV</small>
+          </ng-container>
+          <ng-container *ngIf="selectedFile">
+            <i class="fas fa-file-pdf" style="color:var(--danger);font-size:36px"></i>
+            <h3>{{ selectedFile.name }}</h3>
+            <span>{{ getFileSizeKB() }}</span>
+            <button class="btn btn-outline-danger btn-sm" (click)="removeFile()">Remove</button>
+          </ng-container>
+        </div>
+      </div>
+
+      <div class="card mb-6">
+        <div class="form-group" *ngIf="role!=='admin'">
+          <label>Institution</label>
+          <select class="form-control" [(ngModel)]="selectedInst">
+            <option *ngFor="let i of institutions">{{ i }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data Category</label>
+          <select class="form-control" [(ngModel)]="selectedCategory">
+            <option *ngFor="let c of categories">{{ c }}</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-full" style="height:52px" (click)="extract()" [disabled]="!selectedFile">
+          <i class="fas fa-wand-magic-sparkles"></i> Extract &amp; Upload
+        </button>
+      </div>
+
+      <div class="card" *ngIf="processing">
+        <h4 class="pipeline-title">Processing Pipeline</h4>
+        <div class="pipeline-steps">
+          <div class="pipe-step" *ngFor="let s of pipelineSteps">
+            <div class="step-circle" [class]="s.status">
+              <i class="fas fa-check" *ngIf="s.status==='complete'"></i>
+              <i class="fas fa-spinner fa-spin" *ngIf="s.status==='active'"></i>
+            </div>
+            <div class="step-label" [class.active-label]="s.status==='active'" [class.done-label]="s.status==='complete'">{{ s.label }}</div>
+            <div class="step-status">
+              <span *ngIf="s.status==='complete'" style="color:var(--success)">✓ Done</span>
+              <span *ngIf="s.status==='active'"   style="color:var(--navy)">Processing...</span>
+              <span *ngIf="s.status==='pending'"  style="color:var(--gray-400)">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: Results + History -->
+    <div class="right-col">
+      <div class="card mb-6">
+        <div class="tab-bar">
+          <button class="tab-btn" *ngFor="let t of ['raw','structured','validation']" [class.active]="activeResultTab===t" (click)="activeResultTab=t">
+            {{ t==='raw'?'Raw Text':t==='structured'?'Structured Data':'Validation Report' }}
+          </button>
+        </div>
+
+        <div class="result-content">
+          <pre class="result-pre" *ngIf="activeResultTab==='raw'">FICHE ÉTUDIANT — UNIVERSITÉ DE CARTHAGE
+Établissement: Institut Supérieur de Gestion
+Nom: Ben Salah, Ahmed
+Matricule: ISG-2021-0842
+Spécialité: Finance d'Entreprise
+Niveau: L3
+Note Moyenne: 14.7/20
+Statut: Actif
+Nombre d'absences: 3...</pre>
+
+          <pre class="result-pre" *ngIf="activeResultTab==='structured'">&#123;
+  <span class="json-key">"institution"</span>: <span class="json-str">"ISG Tunis"</span>,
+  <span class="json-key">"student_id"</span>: <span class="json-str">"ISG-2021-0842"</span>,
+  <span class="json-key">"student_name"</span>: <span class="json-str">"Ben Salah Ahmed"</span>,
+  <span class="json-key">"program"</span>: <span class="json-str">"Finance d'Entreprise"</span>,
+  <span class="json-key">"level"</span>: <span class="json-str">"L3"</span>,
+  <span class="json-key">"average_grade"</span>: <span class="json-num">14.7</span>,
+  <span class="json-key">"status"</span>: <span class="json-str">"active"</span>,
+  <span class="json-key">"absences"</span>: <span class="json-num">3</span>
+&#125;</pre>
+
+          <div *ngIf="activeResultTab==='validation'">
+            <table class="data-table">
+              <thead><tr><th>Field</th><th>Value</th><th>Confidence</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let row of [{f:'institution',v:'ISG Tunis',c:85,ok:true},{f:'student_id',v:'ISG-2021-0842',c:97,ok:true},{f:'average_grade',v:'14.7',c:88,ok:true},{f:'absences',v:'3',c:91,ok:true},{f:'email',v:'—',c:0,ok:false}]">
+                  <td>{{ row.f }}</td>
+                  <td>{{ row.v }}</td>
+                  <td>
+                    <div class="conf-track"><div class="conf-fill" [style.width]="row.c+'%'" [style.background]="row.ok?'var(--success)':'var(--warning)'"></div></div>
+                    {{ row.c }}%
+                  </td>
+                  <td [style.color]="row.ok?'var(--success)':'var(--warning)'">{{ row.ok ? '✓ Valid' : '⚠ Not found' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3 class="card-title">Recent Uploads</h3></div>
+        <table class="data-table">
+          <thead><tr><th>File</th><th>Institution</th><th>Category</th><th>Date</th><th>Records</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let h of history">
+              <td class="fw-500">{{ h.file }}</td>
+              <td>{{ h.institution }}</td>
+              <td>{{ h.category }}</td>
+              <td>{{ h.date }}</td>
+              <td>{{ h.records }}</td>
+              <td><span class="badge" [class]="statusClass(h.status)">{{ h.status | titlecase }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" *ngIf="toastMsg">
+  <div class="toast toast-success">✓ {{ toastMsg }}</div>
+</div>

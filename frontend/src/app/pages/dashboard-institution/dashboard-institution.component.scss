@@ -1,0 +1,53 @@
+.inst-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .inst-info {
+    .inst-name { font-size: 24px; font-weight: 700; color: var(--gray-900); margin-bottom: 6px; }
+    .inst-location { font-size: 14px; color: var(--gray-400); }
+    .ml-2 { margin-left: 10px; }
+  }
+  .inst-quick-stats { display: flex; gap: 32px; }
+  .qs-item { text-align: center; }
+  .qs-value { font-family: var(--font-heading); font-size: 22px; font-weight: 700; color: var(--navy); }
+  .qs-label { font-size: 12px; color: var(--gray-400); }
+}
+
+.stat-unit { font-size: 16px; color: var(--gray-400); }
+.stat-name { font-size: 13px; font-weight: 500; color: var(--gray-700); margin-top: 4px; }
+.stat-change { font-size: 12px; margin-top: 2px; }
+
+.period-btns { display: flex; gap: 4px; }
+.period-btn {
+  padding: 5px 12px; border: 1.5px solid var(--gray-200); border-radius: 6px; background: #fff; font-size: 12px; cursor: pointer; color: var(--gray-700);
+  &.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+}
+
+.ai-recs {
+  padding-left: 18px; margin: 0;
+  li { font-size: 13px; color: var(--gray-700); line-height: 1.6; padding: 10px 0; border-bottom: 1px solid var(--gray-100); &:last-child { border-bottom: none; } }
+}
+.ai-footer { font-size: 11px; color: var(--gray-400); margin-top: 14px; }
+
+.anomaly-list { padding: 0 4px; }
+.anomaly-item {
+  border-left: 4px solid var(--danger);
+  padding: 16px 20px;
+  margin-bottom: 12px;
+  background: #fff;
+  border-radius: 0 8px 8px 0;
+  .anomaly-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .anomaly-label { font-weight: 600; font-size: 14px; color: var(--gray-900); flex: 1; }
+  .anomaly-time { font-size: 11px; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.5px; }
+  .anomaly-data-row { display: flex; gap: 32px; background: var(--gray-50); padding: 10px 16px; border-radius: 6px; margin-bottom: 12px; }
+  .anomaly-datum { display: flex; flex-direction: column; gap: 2px; label { font-size: 11px; color: var(--gray-400); text-transform: uppercase; } font-size: 14px; font-weight: 600; }
+  .expand-btn { background: none; border: none; color: var(--navy); font-size: 13px; cursor: pointer; text-decoration: underline; padding: 0; }
+  .anomaly-explanation { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--gray-100); font-size: 13px; color: var(--gray-700); line-height: 1.7; display: flex; gap: 8px; align-items: flex-start; }
+}
+
+.placeholder-tab {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 48px 24px; text-align: center;
+  i { font-size: 40px; color: var(--gray-200); margin-bottom: 16px; }
+  p { font-size: 13px; color: var(--gray-400); }
+}

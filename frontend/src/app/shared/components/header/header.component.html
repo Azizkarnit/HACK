@@ -1,0 +1,39 @@
+<header class="app-header">
+  <div class="header-left">
+    <h2 class="page-title">{{ pageTitle }}</h2>
+  </div>
+  <div class="header-right">
+    <!-- Institution Switcher (super_admin + agent only) -->
+    <div class="inst-switcher" *ngIf="role !== 'admin'">
+      <select class="inst-select" [value]="selectedInstitutionId" (change)="onInstitutionChange($event)">
+        <option value="all">All Institutions</option>
+        <option *ngFor="let inst of institutions" [value]="inst.id">{{ inst.name }}</option>
+      </select>
+    </div>
+
+    <!-- Alerts Bell -->
+    <div class="alerts-wrapper">
+      <button class="btn-icon alerts-btn" (click)="toggleAlerts()">
+        <i class="fas fa-bell"></i>
+        <span class="alert-badge" *ngIf="sampleAlerts.length > 0">{{ sampleAlerts.length }}</span>
+      </button>
+      <div class="alerts-dropdown" *ngIf="showAlerts">
+        <div class="alerts-dropdown-header">
+          <span>Recent Alerts</span>
+          <a routerLink="/alerts" class="view-all">View All</a>
+        </div>
+        <div class="alert-item" *ngFor="let a of sampleAlerts">
+          <span class="dot" [class]="'dot-' + a.severity"></span>
+          <div class="alert-content">
+            <div class="alert-inst">{{ a.institution }}</div>
+            <div class="alert-msg">{{ a.message }}</div>
+          </div>
+          <div class="alert-time">{{ a.time }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Avatar -->
+    <div class="user-btn">{{ getInitials() }}</div>
+  </div>
+</header>

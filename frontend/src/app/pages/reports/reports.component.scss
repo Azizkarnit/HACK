@@ -1,0 +1,21 @@
+.reports-layout { display: flex; gap: 24px; padding: 24px; align-items: flex-start; }
+.report-builder { width: 380px; flex-shrink: 0; background: #fff; border-radius: var(--card-radius); box-shadow: var(--card-shadow); padding: 24px; .builder-title { font-size: 18px; font-weight: 600; margin-bottom: 24px; } }
+.report-right { flex: 1; }
+
+.type-cards { display: flex; flex-direction: column; gap: 8px; }
+.type-card { display: flex; align-items: center; gap: 12px; border: 1.5px solid var(--gray-100); border-radius: 8px; padding: 12px 16px; cursor: pointer; i { font-size: 18px; color: var(--gold); width: 24px; } .tc-label { font-size: 14px; font-weight: 500; } .tc-sub { font-size: 12px; color: var(--gray-400); } &.selected { border-color: var(--navy); background: var(--navy-pale); } }
+
+.scope-toggle { display: flex; button { flex: 1; padding: 8px; border: 1.5px solid var(--gray-200); background: #fff; font-size: 13px; cursor: pointer; &:first-child { border-radius: 6px 0 0 6px; } &:last-child { border-radius: 0 6px 6px 0; } &.active { background: var(--navy); color: #fff; border-color: var(--navy); } } }
+.mt-2 { margin-top: 8px; }
+
+.section-checks { display: flex; flex-direction: column; gap: 8px; .check-item { display: flex; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; input[type="checkbox"] { accent-color: var(--navy); width: 15px; height: 15px; } } }
+
+.format-btns { display: flex; gap: 12px; }
+.fmt-btn { flex: 1; display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--gray-100); border-radius: 8px; padding: 14px 16px; cursor: pointer; font-size: 14px; i { font-size: 20px; } &.selected { border-color: var(--navy); background: var(--navy-pale); } }
+
+.progress-wrap { .progress-track { margin-bottom: 6px; } small { font-size: 12px; color: var(--gray-400); } }
+.gen-wrap { }
+
+.preview-box { height: 200px; border: 1px solid var(--gray-100); border-radius: 8px; background: var(--gray-50); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--gray-400); font-size: 14px; }
+.mock-preview { padding: 16px; .mock-header { font-weight: 600; font-size: 14px; margin-bottom: 12px; color: var(--gray-900); } .mock-bar { height: 24px; border-radius: 4px; margin-bottom: 8px; &.academic { background: var(--navy-pale); } &.finance { background: var(--gold-light); } &.esg { background: var(--success-bg); } } .mock-text { font-size: 12px; color: var(--gray-400); line-height: 1.5; margin-top: 12px; } }
+.fw-500 { font-weight: 500; }

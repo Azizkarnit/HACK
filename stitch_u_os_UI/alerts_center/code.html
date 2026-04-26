@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>U-OS Alerts Center</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#eef0ff",
+                        "on-surface": "#161b2a",
+                        "tertiary-fixed": "#ffdcc1",
+                        "on-secondary-fixed-variant": "#5d4200",
+                        "outline": "#747780",
+                        "surface-variant": "#dee2f7",
+                        "surface-container-lowest": "#ffffff",
+                        "primary": "#002452",
+                        "surface-container-high": "#e3e7fc",
+                        "on-tertiary": "#ffffff",
+                        "secondary-container": "#fdc656",
+                        "tertiary": "#3c1e00",
+                        "error-container": "#ffdad6",
+                        "tertiary-fixed-dim": "#fcb87d",
+                        "on-primary-fixed": "#001a40",
+                        "error": "#ba1a1a",
+                        "surface-dim": "#d5d9ee",
+                        "on-primary": "#ffffff",
+                        "inverse-surface": "#2b3040",
+                        "inverse-primary": "#acc7ff",
+                        "on-tertiary-fixed-variant": "#693c0a",
+                        "on-secondary-container": "#735200",
+                        "tertiary-container": "#5b3000",
+                        "on-primary-fixed-variant": "#294678",
+                        "on-background": "#161b2a",
+                        "surface-bright": "#faf8ff",
+                        "surface": "#faf8ff",
+                        "on-secondary": "#ffffff",
+                        "on-error": "#ffffff",
+                        "background": "#faf8ff",
+                        "surface-container": "#eaedff",
+                        "on-tertiary-fixed": "#2e1500",
+                        "on-surface-variant": "#44474f",
+                        "surface-container-highest": "#dee2f7",
+                        "secondary-fixed-dim": "#f4be4f",
+                        "primary-fixed-dim": "#acc7ff",
+                        "secondary": "#7b5800",
+                        "surface-tint": "#425e91",
+                        "on-tertiary-container": "#d7985f",
+                        "on-primary-container": "#89a5dd",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f2f3ff",
+                        "primary-fixed": "#d7e2ff",
+                        "on-secondary-fixed": "#261900",
+                        "outline-variant": "#c4c6d0",
+                        "secondary-fixed": "#ffdea4",
+                        "primary-container": "#1b3a6b",
+                        
+                        /* Custom palette tokens provided */
+                        "navy": "#1B3A6B",
+                        "navy-dark": "#122954",
+                        "navy-pale": "#E8EEF8",
+                        "gold": "#C8972A",
+                        "gold-light": "#FEF3CC",
+                        "success": "#1B7A4A",
+                        "warning": "#B06A00",
+                        "danger": "#C0392B",
+                        "gray-50": "#F8F9FB",
+                        "gray-100": "#EEF1F6",
+                        "gray-200": "#D8DDE8",
+                        "gray-400": "#8E97A8",
+                        "gray-700": "#3D4558",
+                        "gray-900": "#1A1F2E"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "card": "12px"
+                    },
+                    "spacing": {
+                        "card_padding": "24px",
+                        "header_height": "64px",
+                        "container_padding": "32px",
+                        "sidebar_width": "260px",
+                        "base": "8px",
+                        "gutter": "24px"
+                    },
+                    "boxShadow": {
+                        "card": "0 1px 4px rgba(27,58,107,0.08)"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "h4": ["Plus Jakarta Sans"],
+                        "h1": ["Plus Jakarta Sans"],
+                        "body-md": ["Inter"],
+                        "h2": ["Plus Jakarta Sans"],
+                        "button": ["Inter"],
+                        "h3": ["Plus Jakarta Sans"],
+                        "body-sm": ["Inter"],
+                        "body-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }],
+                        "h4": ["20px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "h1": ["40px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "body-md": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "h2": ["32px", { "lineHeight": "1.25", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "button": ["16px", { "lineHeight": "1", "fontWeight": "600" }],
+                        "h3": ["24px", { "lineHeight": "1.3", "fontWeight": "600" }],
+                        "body-sm": ["14px", { "lineHeight": "1.5", "fontWeight": "400" }],
+                        "body-lg": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-0 h-screen w-sidebar_width z-50 border-r border-slate-800 shadow-2xl shadow-slate-950/50 bg-slate-900 dark:bg-slate-950 flex flex-col py-6">
+<div class="px-6 mb-8 flex items-center gap-4">
+<img alt="U-OS Institutional Logo" class="h-10 w-10 rounded-lg" data-alt="Dark blue U-OS logo mark on white background rounded square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4315ca-nDUHgaYCKKmbmh82cUXNykEIF9e92YwD-PGc2p10-zkLFpm41pWJQSMmEiaIae1668U_luk0rMGbqCLF8VzDthFsKV5Hl_APKUt3LjfdkQGlZnXE_5U4DsZV6o7Kuv9SHDPzQ58NHMUVT3jamV3tjZxO0lfLYYEUMIYjAl4_FMk1ODPPVW-Fs8NsmUYQzf6M0OjX03_ToeGQCaLujqqrtHQSlpJ7USZaIzLxOMeVDC9cF8Pg63CUBuCK4OFM98JpdNCCU"/>
+<div>
+<h1 class="text-2xl font-bold tracking-tighter text-white font-plus-jakarta-sans antialiased tracking-tight">U-OS</h1>
+<p class="text-xs text-slate-400 font-label-caps tracking-widest mt-1">Institutional Oversight</p>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-button text-button">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-button text-button">Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-amber-400 bg-slate-800/50 border-r-4 border-amber-400 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+<span class="font-button text-button">Alerts</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">smart_toy</span>
+<span class="font-button text-button">AI Assistant</span>
+</a>
+</div>
+<div class="mt-auto flex flex-col gap-2 border-t border-slate-800 pt-4">
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-button text-button">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 hover:text-white transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-button text-button">Support</span>
+</a>
+</div>
+</nav>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 h-header_height left-[260px] z-40 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 shadow-sm shadow-blue-900/5 flex justify-between items-center px-8">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-slate-400">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-body-sm text-slate-700 placeholder-slate-400 w-64" placeholder="Search..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex gap-4">
+<button class="text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors p-2 focus:ring-2 focus:ring-blue-900/20"><span class="material-symbols-outlined">notifications</span></button>
+<button class="text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors p-2 focus:ring-2 focus:ring-blue-900/20"><span class="material-symbols-outlined">help_outline</span></button>
+<button class="text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-lg transition-colors p-2 focus:ring-2 focus:ring-blue-900/20"><span class="material-symbols-outlined">account_circle</span></button>
+</div>
+<div class="h-8 w-px bg-slate-200"></div>
+<div class="flex items-center gap-3">
+<img alt="User profile" class="h-8 w-8 rounded-full" data-alt="Headshot of professional person smiling softly" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDL7LuzZKYkdNrPjGbhxUjgLb1MAtO4UJEAGGmC4lyBKkHwkUYej2YhoMSW3b-fnz9GmaefW94Jfo63vOaPpCV_XyXPEbXdL8BohNFrKxNAKu5HpUrl-Rmaj1RiRSsxJu5xJtVQ6zbY-vMj7DKRYvJ_7Z55HBoqzNwmqaGKmCQaIgZVQxHf2CidEcTL-mcMSp6E9qFOFRop6bUbCyh8Cckec54M-YnYjgTdvsqJ_1Dd6emU0dCfziNylTiO1xZPH7YLAEHdPSHiFmI"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="pl-sidebar_width pt-header_height min-h-screen pb-12">
+<div class="max-w-[1440px] mx-auto px-container_padding py-8">
+<!-- HEADER ROW -->
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-4">
+<h2 class="font-h2 text-h2 text-primary">Alerts Center</h2>
+<span class="bg-danger text-white font-label-caps text-label-caps px-3 py-1 rounded-full" id="badge-count">8 unresolved alerts</span>
+</div>
+<button class="h-12 px-6 rounded-lg font-button text-button border-2 border-success text-success hover:bg-success hover:text-white transition-colors flex items-center gap-2" id="btn-resolve-all">
+<span class="material-symbols-outlined">done_all</span>
+                    Mark All Resolved
+                </button>
+</div>
+<!-- FILTER ROW -->
+<div class="bg-surface-container-lowest rounded-card shadow-card p-card_padding mb-8">
+<div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+<div class="flex flex-col gap-1" id="filter-institution">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Institution</label>
+<select class="h-12 border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option value="all">All Institutions</option>
+<option value="IPEIEM">IPEIEM</option>
+<option value="ESCT">ESCT</option>
+<option value="ISTMT">ISTMT</option>
+<option value="ISET">ISET</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Domain</label>
+<select class="h-12 border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option value="all">All Domains</option>
+<option value="Academic">Academic</option>
+<option value="HR">HR</option>
+<option value="Finance">Finance</option>
+<option value="ESG">ESG</option>
+<option value="Infrastructure">Infrastructure</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Severity</label>
+<select class="h-12 border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary">
+<option value="all">All Severities</option>
+<option value="Critical">Critical</option>
+<option value="Warning">Warning</option>
+</select>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant">Date Range</label>
+<div class="flex gap-2">
+<input class="h-12 border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary w-full text-slate-500" type="date"/>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<label class="font-label-caps text-label-caps text-on-surface-variant"> </label>
+<div class="flex gap-2">
+<input class="h-12 border-gray-200 rounded-lg text-sm focus:ring-primary focus:border-primary w-full text-slate-500" type="date"/>
+</div>
+</div>
+</div>
+</div>
+<!-- ALERTS TABS -->
+<div class="flex gap-8 border-b border-gray-200 mb-6">
+<button class="font-button text-button pb-4 border-b-2 border-primary text-primary">All (8)</button>
+<button class="font-button text-button pb-4 border-b-2 border-transparent text-gray-400 hover:text-gray-700">Critical (3)</button>
+<button class="font-button text-button pb-4 border-b-2 border-transparent text-gray-400 hover:text-gray-700">Warning (5)</button>
+<button class="font-button text-button pb-4 border-b-2 border-transparent text-gray-400 hover:text-gray-700">Resolved (12)</button>
+</div>
+<!-- ALERT CARDS LIST -->
+<div class="flex flex-col gap-4" id="alerts-container">
+<!-- Card 1 -->
+<div class="alert-card bg-surface-container-lowest rounded-card shadow-card p-card_padding border-l-4 border-danger relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="bg-danger/10 text-danger font-label-caps text-label-caps px-2 py-1 rounded">Critical</span>
+<h3 class="font-h4 text-h4 text-on-surface">Dropout Rate</h3>
+<span class="text-sm font-medium text-slate-500 px-2 border-l border-slate-200">IPEIEM</span>
+</div>
+<div class="flex items-center gap-4 text-sm text-slate-500">
+<span class="bg-gray-50 px-2 py-1 rounded">Academic</span>
+<span>2 hours ago</span>
+</div>
+</div>
+<div class="bg-gray-50 rounded-lg p-4 mb-4 grid grid-cols-3 gap-4 border border-gray-100">
+<div>
+<p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Current Value</p>
+<p class="text-lg font-bold text-danger">18.4%</p>
+</div>
+<div>
+<p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Threshold</p>
+<p class="text-lg font-bold text-slate-700">&gt;15%</p>
+</div>
+<div>
+<p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Duration</p>
+<p class="text-lg font-bold text-slate-700">42 days</p>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-blue-50/50 p-4 rounded-lg mb-6 border border-blue-100/50">
+<span class="material-symbols-outlined text-primary mt-0.5 text-[20px]">smart_toy</span>
+<p class="text-sm text-slate-700">"Sustained increase for 6 weeks — intervention required."</p>
+</div>
+<div class="flex gap-3">
+<button class="h-10 px-4 rounded-lg font-button text-sm border border-gray-200 text-slate-700 hover:bg-gray-50 transition-colors">View KPI</button>
+<button class="btn-resolve h-10 px-4 rounded-lg font-button text-sm bg-success text-white hover:bg-success/90 transition-colors">Resolve</button>
+<button class="btn-snooze h-10 px-4 rounded-lg font-button text-sm bg-gray-100 text-slate-600 hover:bg-gray-200 transition-colors ml-auto">Snooze 24h</button>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="alert-card bg-surface-container-lowest rounded-card shadow-card p-card_padding border-l-4 border-warning relative overflow-hidden group">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-3">
+<span class="bg-warning/10 text-warning font-label-caps text-label-caps px-2 py-1 rounded">Warning</span>
+<h3 class="font-h4 text-h4 text-on-surface">Carbon Footprint</h3>
+<span class="text-sm font-medium text-slate-500 px-2 border-l border-slate-200">ESCT</span>
+</div>
+<div class="flex items-center gap-4 text-sm text-slate-500">
+<span class="bg-gray-50 px-2 py-1 rounded">ESG</span>
+<span>5 hours ago</span>
+</div>
+</div>
+<div class="bg-gray-50 rounded-lg p-4 mb-4 grid grid-cols-3 gap-4 border border-gray-100">
+<div>
+<p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Current Value</p>
+<p class="text-lg font-bold text-warning">88 tCO2</p>
+</div>
+<div>
+<p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Threshold</p>
+<p class="text-lg font-bold text-slate-700">&lt;75</p>
+</div>
+<div>
+<p class="text-xs text-slate-500 uppercase tracking-wider mb-1">Duration</p>
+<p class="text-lg font-bold text-slate-700">14 days</p>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-blue-50/50 p-4 rounded-lg mb-6 border border-blue-100/50">
+<span class="material-symbols-outlined text-primary mt-0.5 text-[20px]">smart_toy</span>
+<p class="text-sm text-slate-700">"Above quarterly ESG target."</p>
+</div>
+<div class="flex gap-3">
+<button class="h-10 px-4 rounded-lg font-button text-sm border border-gray-200 text-slate-700 hover:bg-gray-50 transition-colors">View KPI</button>
+<button class="btn-resolve h-10 px-4 rounded-lg font-button text-sm bg-success text-white hover:bg-success/90 transition-colors">Resolve</button>
+<button class="btn-snooze h-10 px-4 rounded-lg font-button text-sm bg-gray-100 text-slate-600 hover:bg-gray-200 transition-colors ml-auto">Snooze 24h</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Toast Container -->
+<div class="fixed bottom-8 right-8 z-50 flex flex-col gap-2" id="toast-container"></div>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('alerts-container');
+            const badge = document.getElementById('badge-count');
+            let unresolvedCount = 2; // Initial count based on rendered html
+
+            // Function to show toast
+            const showToast = (message) => {
+                const toast = document.createElement('div');
+                toast.className = 'bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg font-body-sm flex items-center gap-2 transform transition-all duration-300 translate-y-0 opacity-100';
+                toast.innerHTML = `<span class="material-symbols-outlined text-sm">info</span> ${message}`;
+                document.getElementById('toast-container').appendChild(toast);
+                
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            };
+
+            // Resolve button logic
+            document.querySelectorAll('.btn-resolve').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const card = e.target.closest('.alert-card');
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateX(20px)';
+                    
+                    setTimeout(() => {
+                        card.remove();
+                        unresolvedCount--;
+                        if(unresolvedCount > 0) {
+                            badge.textContent = `${unresolvedCount} unresolved alerts`;
+                        } else {
+                            badge.textContent = `0 unresolved alerts`;
+                            badge.classList.replace('bg-danger', 'bg-success');
+                        }
+                        showToast('Alert resolved successfully');
+                    }, 500);
+                });
+            });
+
+            // Snooze button logic
+            document.querySelectorAll('.btn-snooze').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    showToast('Alert snoozed for 24 hours');
+                });
+            });
+
+            // Mark All Resolved logic
+            document.getElementById('btn-resolve-all').addEventListener('click', () => {
+                if(confirm('Are you sure you want to mark all currently visible alerts as resolved?')) {
+                    const cards = document.querySelectorAll('.alert-card');
+                    cards.forEach(card => {
+                        card.style.transition = 'all 0.5s ease';
+                        card.style.opacity = '0';
+                    });
+                    setTimeout(() => {
+                        container.innerHTML = '<div class="text-center py-12 text-slate-500 font-body-lg">No unresolved alerts remaining.</div>';
+                        badge.textContent = `0 unresolved alerts`;
+                        badge.classList.replace('bg-danger', 'bg-success');
+                        unresolvedCount = 0;
+                    }, 500);
+                }
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,75 @@
+<div class="login-page">
+  <!-- Left Brand Panel -->
+  <div class="brand-panel">
+    <div class="brand-center">
+      <div class="brand-logo">UCAR</div>
+      <h1 class="brand-title">U-OS</h1>
+      <p class="brand-subtitle">Strategic Operating System</p>
+
+      <div class="brand-features">
+        <div class="feature-row">
+          <div class="feat-icon"><i class="fas fa-building"></i></div>
+          <span>30+ Institutions in one place</span>
+        </div>
+        <div class="feature-row">
+          <div class="feat-icon"><i class="fas fa-chart-line"></i></div>
+          <span>Real-time KPI monitoring</span>
+        </div>
+        <div class="feature-row">
+          <div class="feat-icon"><i class="fas fa-robot"></i></div>
+          <span>AI-powered insights</span>
+        </div>
+      </div>
+    </div>
+    <div class="brand-footer">University of Carthage · HACK4UCAR 2025</div>
+  </div>
+
+  <!-- Right Form Panel -->
+  <div class="form-panel">
+    <div class="form-container">
+      <div class="mobile-logo">UCAR</div>
+      <h2 class="form-greeting">Welcome back</h2>
+      <p class="form-sub">Sign in to your account</p>
+
+      <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input id="email" type="email" class="form-control" [(ngModel)]="email" name="email"
+                 placeholder="your@email.com" autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-wrapper">
+            <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-control"
+                   [(ngModel)]="password" name="password" placeholder="••••••••" autocomplete="current-password">
+            <button type="button" class="toggle-pwd" (click)="togglePassword()">
+              <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="error-msg" *ngIf="errorMsg">
+          <i class="fas fa-circle-exclamation"></i> {{ errorMsg }}
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-full btn-lg signin-btn" [disabled]="loading">
+          <ng-container *ngIf="!loading">
+            <i class="fas fa-right-to-bracket"></i> Sign In
+          </ng-container>
+          <ng-container *ngIf="loading">
+            <span class="dot-loader"><span></span><span></span><span></span></span>
+          </ng-container>
+        </button>
+      </form>
+
+      <div class="demo-hint">
+        <p><strong>Demo:</strong> Use <code>admin&#64;uos.tn</code> (super admin), <code>agent&#64;uos.tn</code> (agent), or <code>local&#64;isg.tn</code> (institution admin)</p>
+      </div>
+
+      <div class="forgot-link">
+        <a href="#">Forgot password?</a>
+      </div>
+    </div>
+  </div>
+</div>

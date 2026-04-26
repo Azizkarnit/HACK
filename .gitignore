@@ -1,0 +1,129 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+# ======================
+# Python / FastAPI
+# ======================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+
+.env
+.env.*
+venv/
+.venv/
+
+*.log
+
+# ======================
+# Angular / Node
+# ======================
+node_modules/
+dist/
+.angular/
+*.tsbuildinfo
+coverage/
+
+
+# IDE Settings (PyCharm, VS Code)
+.idea/
+.vscode/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+stitch_u_os_UI/full.sql
+
+
+# ======================
+# Backend Specific
+# ======================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.db
+
+.env
+.env.*
+venv/
+.venv/
+
+# Logs
+*.log
+
+# ======================
+# Frontend Specific
+# ======================
+node_modules/
+dist/
+.angular/
+*.tsbuildinfo
+coverage/
+

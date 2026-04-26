@@ -1,0 +1,85 @@
+<div class="page-content">
+  <div class="header-row mb-6">
+    <div>
+      <h1 class="page-title">Network Alerts</h1>
+      <p class="page-subtitle">Real-time critical flags and performance exceptions across the UCAR network.</p>
+    </div>
+    <button class="btn btn-primary" (click)="markAllResolved()" [disabled]="unresolvedCount === 0">
+      <i class="fas fa-check-double"></i> Mark All Resolved
+    </button>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-state text-center py-10">
+    <div class="spinner mb-3"></div>
+    <p class="text-muted">Fetching latest alerts...</p>
+  </div>
+
+  <div *ngIf="!isLoading && alertsData.length === 0" class="empty-state text-center py-10">
+    <i class="fas fa-shield-check text-success mb-3" style="font-size: 3rem;"></i>
+    <h3>All Systems Clear</h3>
+    <p class="text-muted">No active alerts detected in the network.</p>
+  </div>
+
+  <div *ngIf="!isLoading && alertsData.length > 0">
+  <div class="tab-bar mb-6">
+    <button class="tab-btn" [class.active]="activeTab==='all'"      (click)="setTab('all')">All ({{ activeAlerts.length }})</button>
+    <button class="tab-btn" [class.active]="activeTab==='critical'" (click)="setTab('critical')">Critical ({{ activeCriticalCount }})</button>
+    <button class="tab-btn" [class.active]="activeTab==='warning'"  (click)="setTab('warning')">Warning ({{ activeWarningCount }})</button>
+    <button class="tab-btn" [class.active]="activeTab==='resolved'" (click)="setTab('resolved')">Resolved ({{ resolvedData.length }})</button>
+  </div>
+
+
+  <!-- Active Alerts -->
+  <div class="alert-cards" *ngIf="activeTab!=='resolved'">
+    <div class="alert-card" *ngFor="let a of filteredAlerts" [style.border-left-color]="a.severity==='critical'?'var(--danger)':'var(--warning)'">
+      <div class="ac-row1">
+        <span class="badge" [class]="badgeClass(a.severity)">{{ a.severity | titlecase }}</span>
+        <span class="ac-kpi">{{ a.kpi }}</span>
+        <span class="ac-sep">·</span>
+        <span class="ac-inst" *ngIf="role!=='admin'">{{ a.institution }}</span>
+        <div class="ac-meta">
+          <span class="badge badge-navy">{{ a.domain }}</span>
+          <span class="ac-time">{{ a.days }} days ago</span>
+        </div>
+      </div>
+
+      <div class="ac-data">
+        <div class="acd-item"><label>Current Value</label><span [style.color]="a.severity==='critical'?'var(--danger)':'var(--warning)'">{{ a.current }}</span></div>
+        <div class="acd-item"><label>Threshold</label><span>{{ a.threshold }}</span></div>
+        <div class="acd-item"><label>Duration</label><span>{{ a.days }} days</span></div>
+      </div>
+
+      <div class="ac-explanation">
+        <i class="fas fa-robot" style="color:var(--gold);font-size:13px"></i>
+        {{ a.msg }}
+      </div>
+
+      <div class="ac-actions">
+        <button class="btn btn-outline btn-sm">View KPI →</button>
+        <button class="btn btn-outline-success btn-sm" (click)="resolve(a.id)"><i class="fas fa-check"></i> Resolve</button>
+        <button class="btn btn-outline btn-sm" (click)="snooze(a.id)"><i class="fas fa-clock"></i> Snooze 24h</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resolved Alerts -->
+  <div class="alert-cards" *ngIf="activeTab==='resolved'">
+    <div class="alert-card resolved" *ngFor="let r of resolvedData">
+      <div class="ac-row1">
+        <span class="badge badge-success">Resolved</span>
+        <span class="ac-kpi">{{ r.kpi }}</span>
+        <span class="ac-sep">·</span>
+        <span class="ac-inst">{{ r.institution }}</span>
+        <div class="ac-meta">
+          <span class="badge badge-navy">{{ r.domain }}</span>
+        </div>
+      </div>
+      <div class="resolved-by">Resolved by: {{ r.resolvedBy }} · {{ r.resolvedAt }}</div>
+      <div class="ac-actions"><button class="btn btn-outline btn-sm">View Details</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" *ngIf="toastMsg">
+  <div class="toast toast-success">✓ {{ toastMsg }}</div>
+</div>

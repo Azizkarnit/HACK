@@ -1,0 +1,101 @@
+<div class="page-content">
+  <div *ngIf="errorMessage" class="error-banner" style="background: var(--danger); color: white; padding: 10px; border-radius: 6px; margin-bottom: 20px;">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Institution Header -->
+  <div class="card inst-header mb-6">
+    <div class="inst-info">
+      <h1 class="inst-name">{{ institutionName }}</h1>
+      <span class="inst-location"><i class="fas fa-map-marker-alt"></i> Tunis, Tunisia</span>
+      <span class="badge badge-navy ml-2">Higher Education · Public</span>
+    </div>
+    <div class="inst-quick-stats">
+      <div class="qs-item"><div class="qs-value">4,280</div><div class="qs-label">Students</div></div>
+      <div class="qs-item"><div class="qs-value">87%</div><div class="qs-label">Budget Used</div></div>
+      <div class="qs-item"><div class="qs-value">23</div><div class="qs-label">Active KPIs</div></div>
+    </div>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar mb-6">
+    <button *ngFor="let tab of tabs" 
+            class="tab-btn" 
+            [class.active]="activeTab === tab"
+            (click)="setTab(tab)">{{ tab }}</button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="grid-4 mb-6">
+    <div class="stat-card" *ngFor="let k of kpiCards">
+      <div class="stat-label">
+        <span class="badge badge-navy">{{ k.domain }}</span>
+        <i class="fas fa-arrow-trend-up" [style.color]="k.positive ? 'var(--success)' : 'var(--danger)'"></i>
+      </div>
+      <div class="stat-value">{{ k.value }}<span class="stat-unit"> {{ k.unit }}</span></div>
+      <div class="stat-name">{{ k.label }}</div>
+      <div class="stat-change" [style.color]="k.positive ? 'var(--success)' : 'var(--danger)'">
+        {{ k.change }} vs last month
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart + AI Recommendations -->
+  <div class="grid-2-3 split-65-35 mb-6">
+    <div class="card">
+      <div class="card-header">
+        <h3 class="card-title">KPI Trend — {{ activeTab }}</h3>
+        <div class="period-btns">
+          <button class="btn btn-outline btn-xs mr-2" (click)="resetZoom()" title="Reset Zoom">
+            <i class="fas fa-arrows-rotate"></i>
+          </button>
+          <button *ngFor="let p of ['1M','3M','6M','1Y']" class="period-btn" [class.active]="activePeriod===p" (click)="setPeriod(p)">{{ p }}</button>
+        </div>
+      </div>
+      <canvas #lineChart height="220"></canvas>
+    </div>
+
+    <div class="ai-panel">
+      <div class="ai-panel-header">
+        <i class="fas fa-lightbulb ai-icon"></i>
+        <span class="ai-title">AI Recommendations</span>
+      </div>
+      <ol class="ai-recs">
+        <li *ngFor="let r of recommendations">{{ r }}</li>
+      </ol>
+      <div class="ai-footer">
+        <i class="fas fa-clock"></i> Last updated 5 min ago
+      </div>
+    </div>
+  </div>
+
+  <!-- Anomaly Detections -->
+  <div class="card" *ngIf="anomalies.length > 0">
+    <div class="card-header">
+      <h3 class="card-title">Anomaly Detections</h3>
+      <span class="badge badge-critical">{{ anomalies.length }} anomalies found</span>
+    </div>
+    <div class="anomaly-list">
+      <div class="anomaly-item" *ngFor="let a of anomalies; let i = index"
+           [style.border-left-color]="a.severity==='critical' ? 'var(--danger)' : 'var(--warning)'">
+        <div class="anomaly-top">
+          <span class="badge" [class]="a.severity==='critical'?'badge-critical':'badge-warning'">{{ a.badge }}</span>
+          <span class="anomaly-label">{{ a.label }}</span>
+          <span class="anomaly-time">{{ a.time }}</span>
+        </div>
+        <div class="anomaly-data-row">
+          <span class="anomaly-datum"><label>Current</label>{{ a.current }}</span>
+          <span class="anomaly-datum"><label>Expected</label>{{ a.expected }}</span>
+          <span class="anomaly-datum"><label>Z-Score</label>{{ a.zscore }}</span>
+        </div>
+        <button class="expand-btn" (click)="toggleAnomaly(i)">
+          See AI Explanation <i class="fas" [class.fa-chevron-down]="!expandedAnomalies[i]" [class.fa-chevron-up]="expandedAnomalies[i]"></i>
+        </button>
+        <div class="anomaly-explanation" *ngIf="expandedAnomalies[i]">
+          <i class="fas fa-robot" style="color:var(--gold)"></i>
+          {{ a.explanation }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
