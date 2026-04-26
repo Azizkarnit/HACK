@@ -78,4 +78,19 @@ export class DashboardService {
       headers: this.getHeaders()
     });
   }
+
+  getResolvedAlerts(institutionId?: string): Observable<Alert[]> {
+    const url = institutionId 
+      ? `${environment.apiUrl}/alerts/resolved?institution_id=${institutionId}` 
+      : `${environment.apiUrl}/alerts/resolved`;
+    return this.http.get<Alert[]>(url, {
+      headers: this.getHeaders()
+    });
+  }
+
+  resolveAlert(alertId: string): Observable<any> {
+    return this.http.patch(`${environment.apiUrl}/alerts/${alertId}/resolve`, {}, {
+      headers: this.getHeaders()
+    });
+  }
 }

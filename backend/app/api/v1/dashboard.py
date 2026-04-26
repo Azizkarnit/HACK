@@ -18,7 +18,7 @@ def global_dashboard(user=Depends(get_current_user)):
         print("Fetching global dashboard data...")
         kpis = supabase.table("kpi_values").select("*, kpi_definitions(name, category), institutions(name)").order("period_date", desc=True).limit(1000).execute().data
         insights = supabase.table("ai_insights").select("*, kpi_definitions(name, category), institutions(name)").neq("status", "resolved").order("created_at", desc=True).limit(100).execute().data
-        alerts = supabase.table("alerts").select("*, institutions(name)").order("created_at", desc=True).limit(100).execute().data
+        alerts = supabase.table("alerts").select("*, institutions(name)").eq("status", "active").order("created_at", desc=True).limit(100).execute().data
         
         # Simpler count
         activity_res = supabase.table("system_activity").select("id").eq("type", "report_generated").execute()
@@ -64,6 +64,7 @@ def institution_dashboard(
         alerts = supabase.table("alerts") \
             .select("*, institutions(name)") \
             .eq("institution_id", inst_id) \
+            .eq("status", "active") \
             .execute().data
     except Exception as e:
         return {

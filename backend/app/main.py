@@ -9,6 +9,7 @@ from api.v1.ai import router as ai_router
 from api.v1.dashboard import router as dashboard_router
 from api.v1.ingestion import router as ingestion_router
 from api.v1.institutions import router as institutions_router
+from api.v1.alerts import router as alerts_router
 
 
 # =====================================================
@@ -57,6 +58,7 @@ app.include_router(ai_router, prefix="/api/v1")
 app.include_router(dashboard_router, prefix="/api/v1")
 app.include_router(ingestion_router, prefix="/api/v1/ingestion")
 app.include_router(institutions_router, prefix="/api/v1/institutions")
+app.include_router(alerts_router, prefix="/api/v1")
 
 
 # =====================================================

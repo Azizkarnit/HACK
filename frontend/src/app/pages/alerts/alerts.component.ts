@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { DashboardService } from '../../core/services/dashboard.service';
 
@@ -17,11 +18,10 @@ export class AlertsComponent implements OnInit {
   toastMsg = '';
   isLoading = true;
 
-  alertsData: any[] = [];
-  activeAlerts: any[] = []; // Template dependency
-  resolvedData: any[] = []; // Template dependency
-  resolvedIds: Set<string> = new Set();
+  activeAlerts: any[] = [];
+  resolvedAlerts: any[] = [];
   snoozedIds: Set<string> = new Set();
+  currentUser: any = null;
 
   constructor(
     private auth: AuthService,
@@ -30,31 +30,29 @@ export class AlertsComponent implements OnInit {
 
   ngOnInit(): void {
     this.role = this.auth.getRole();
+    this.currentUser = this.auth.getCurrentUser();
+    
+    // Snoozed state can stay in localStorage as it is temporary
+    const savedSnoozed = localStorage.getItem('snoozedAlerts');
+    if (savedSnoozed) this.snoozedIds = new Set(JSON.parse(savedSnoozed));
+
     this.loadAlerts();
   }
 
   loadAlerts(): void {
     this.isLoading = true;
-    const fetch$ = this.role === 'super_admin' 
-      ? this.dashboardService.getGlobalDashboard()
-      : this.dashboardService.getInstitutionDashboard(this.auth.getInstitutionId() || '');
+    const instId = this.auth.getInstitutionId() || undefined;
 
-    fetch$.subscribe({
-      next: (data) => {
-        this.alertsData = data.alerts.map((a: any) => ({
-          id: a.id,
-          severity: a.severity,
-          kpi: a.message.split('(')[0].trim(),
-          institution: a.institutions?.name || 'Your Institution',
-          institution_id: a.institution_id,
-          domain: 'General',
-          current: a.actual_value?.toString() || '--',
-          threshold: a.threshold?.toString() || '--',
-          days: this.calculateDays(a.created_at),
-          msg: a.message,
-          created_at: a.created_at
-        }));
-        this.activeAlerts = this.alertsData;
+    const dashboard$ = this.role === 'super_admin' 
+      ? this.dashboardService.getGlobalDashboard()
+      : this.dashboardService.getInstitutionDashboard(instId);
+    
+    const resolved$ = this.dashboardService.getResolvedAlerts(this.role === 'admin' ? instId : undefined);
+
+    forkJoin([dashboard$, resolved$]).subscribe({
+      next: ([dashData, resolvedData]) => {
+        this.activeAlerts = dashData.alerts.map((a: any) => this.mapAlert(a));
+        this.resolvedAlerts = resolvedData.map((a: any) => this.mapAlert(a));
         this.isLoading = false;
       },
       error: (err) => {
@@ -62,6 +60,22 @@ export class AlertsComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  private mapAlert(a: any) {
+    return {
+      id: a.id,
+      severity: a.severity,
+      kpi: a.message.split('(')[0].trim(),
+      institution: a.institutions?.name || 'Your Institution',
+      institution_id: a.institution_id,
+      domain: 'General',
+      current: a.actual_value?.toString() || '--',
+      threshold: a.threshold?.toString() || '--',
+      days: this.calculateDays(a.created_at),
+      msg: a.message,
+      created_at: a.created_at
+    };
   }
 
   calculateDays(dateStr: string): number {
@@ -72,33 +86,50 @@ export class AlertsComponent implements OnInit {
   }
 
   get filteredAlerts() {
-    let list = this.alertsData.filter(a => !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id));
+    if (this.activeTab === 'resolved') {
+      return this.resolvedAlerts;
+    }
+    
+    let list = this.activeAlerts.filter(a => !this.snoozedIds.has(a.id));
     if (this.activeTab === 'critical') list = list.filter(a => a.severity === 'critical');
     if (this.activeTab === 'warning')  list = list.filter(a => a.severity === 'warning');
-    if (this.activeTab === 'resolved') return []; // This would pull from a different list if we had it
     return list;
   }
 
-  get unresolvedCount(): number { return this.filteredAlerts.length; }
-  get activeCriticalCount(): number { return this.alertsData.filter(a => a.severity === 'critical' && !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id)).length; }
-  get activeWarningCount():  number { return this.alertsData.filter(a => a.severity === 'warning' && !this.resolvedIds.has(a.id) && !this.snoozedIds.has(a.id)).length; }
+  get unresolvedCount(): number { 
+    return this.activeAlerts.filter(a => !this.snoozedIds.has(a.id)).length; 
+  }
+  
+  get activeCriticalCount(): number { return this.activeAlerts.filter(a => a.severity === 'critical' && !this.snoozedIds.has(a.id)).length; }
+  get activeWarningCount():  number { return this.activeAlerts.filter(a => a.severity === 'warning' && !this.snoozedIds.has(a.id)).length; }
 
   setTab(tab: string): void { this.activeTab = tab; }
 
   resolve(id: string): void {
-    // In a real app, call backend to mark as resolved
-    this.resolvedIds.add(id);
-    this.showToast('Alert resolved successfully');
+    this.dashboardService.resolveAlert(id).subscribe({
+      next: () => {
+        const alert = this.activeAlerts.find(a => a.id === id);
+        if (alert) {
+          this.activeAlerts = this.activeAlerts.filter(a => a.id !== id);
+          this.resolvedAlerts.unshift(alert);
+        }
+        this.showToast('Alert resolved successfully');
+      },
+      error: (err) => {
+        console.error('Failed to resolve alert', err);
+      }
+    });
   }
 
   snooze(id: string): void { 
     this.snoozedIds.add(id);
+    localStorage.setItem('snoozedAlerts', JSON.stringify(Array.from(this.snoozedIds)));
     this.showToast('Alert snoozed for 24 hours'); 
   }
 
   viewDetails(alert: any): void {
     // Attempt to navigate to the institution or global dashboard depending on the alert
-    const instId = this.alertsData.find(a => a.id === alert.id)?.institution_id;
+    const instId = alert.institution_id;
     if (instId) {
       window.location.href = `/institution?id=${instId}`;
     } else {
@@ -113,7 +144,20 @@ export class AlertsComponent implements OnInit {
 
   markAllResolved(): void {
     if (confirm('Mark all alerts as resolved?')) {
-      this.alertsData.forEach(a => this.resolvedIds.add(a.id));
+      // In a real app, we'd have a bulk resolve endpoint. 
+      // For this demo, we'll just resolve them one by one or clear the list.
+      const ids = this.activeAlerts.map(a => a.id);
+      ids.forEach(id => {
+        this.dashboardService.resolveAlert(id).subscribe({
+          next: () => {
+            const alert = this.activeAlerts.find(a => a.id === id);
+            if (alert) {
+              this.activeAlerts = this.activeAlerts.filter(a => a.id !== id);
+              this.resolvedAlerts.unshift(alert);
+            }
+          }
+        });
+      });
       this.showToast('All alerts marked as resolved');
     }
   }
